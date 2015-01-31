@@ -1,0 +1,140 @@
+@import url(http://fonts.googleapis.com/css?family=Raleway:400,100,900,200,500,300,600,700,800);
+
+* {
+  font-family: 'Raleway';
+}
+
+.agenda {
+  position: relative;
+  border: 1px solid #e3e3e3;
+  padding-top: 69px;
+  background: rgb(112,112,112);
+  margin-bottom: 20px;
+  width: 1120px;
+}
+
+.agenda__frame {
+  overflow-y: auto;
+  height: 850px;
+  width: 1120px;
+}
+
+.agenda table {
+  border-spacing: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.agenda__row.\--hour-start > .agenda__cell {
+  border-top: 1px solid rgb(218,218,218);
+}
+
+.agenda__cell {
+  border-left: 2px solid rgb(218,218,218);
+  border-bottom: 1px solid rgb(218,218,218);
+  height: 15px;
+  background: rgb(240,240,240);
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.agenda__cell.\--time {
+  vertical-align: top;
+  text-align: center;
+  height: 60px;
+  border: none !important;
+  background: #FFF;
+}
+
+.agenda__cell.\--controls {
+  width: 100px;
+  border: none !important;
+}
+
+.agenda__cell.\--head {
+  border: none !important;
+}
+
+.agenda__cell.\--head, .agenda__cell.\--controls {
+  height: 0;
+  line-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: transparent;
+  border: none;
+  white-space: nowrap;
+  font-weight: normal;
+}
+
+.agenda__cell.\--head div, .agenda__cell.\--controls div {
+  position: absolute;
+  background: transparent;
+  color: rgb(255,255,255);
+  padding: 0px 25px;
+  top: 0;
+  margin-left: 25px;
+  line-height: 69px;
+}
+
+.agenda__cell.\--controls .agenda__prev,
+.agenda__cell.\--controls .agenda__next {
+  width: 50px;
+  height: 69px;
+  color: #FFF;
+  padding: 0;
+  margin-left: 0;
+  cursor: pointer;
+}
+
+.agenda__cell.\--controls .agenda__prev {
+  left: 0;
+}
+
+.agenda__cell.\--controls .agenda__prev:before {
+  font-family: FontAwesome;
+  content: "\f0d9";
+}
+
+.agenda__cell.\--controls .agenda__next {
+  left: 50px;
+}
+
+.agenda__cell.\--controls .agenda__next:before {
+  font-family: FontAwesome;
+  content: "\f0da";
+}
+
+.agenda__cell.snorlax {
+  background: #005B67;
+}
+
+.agenda__cell.jigglypuff {
+  background: #FA8CC8;
+}
+
+.agenda__cell.pikachu {
+  background: #FFDA00;
+}
+
+.agenda__cell.charizard {
+  background: #FE9247;
+}
+
+.agenda__cell.outline {
+  border-left: 3px solid #666;
+  border-right: 3px solid #666;
+}
+
+.agenda__cell.\--hovered {
+  background: #81B000;
+  border: none !important;
+}
+
+.agenda__cell.\--hovered-first {
+  border-top: 8px solid green !important;
+}
+
+.agenda__cell.\--hovered-last {
+  border-bottom: 8px solid green !important;
+}

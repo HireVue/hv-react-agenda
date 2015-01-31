@@ -1,0 +1,50 @@
+{
+  "name": "hv-react-agenda",
+  "version": "0.1.0",
+  "description": "Fancy agenda component for use with ReactJS.",
+  "main": "modules/HvReactAgenda.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ebrentnelson/hv-react-agenda.git"
+  },
+  "homepage": "https://github.com/ebrentnelson/hv-react-agenda/blob/master/README.md",
+  "bugs": {
+    "url": "https://github.com/ebrentnelson/hv-react-agenda/issues"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack --progress --colors modules/HvReactAgenda.js dist/hv-react-agenda.js",
+    "build-min": "NODE_ENV=production COMPRESS=1 webpack --progress --colors modules/HvReactAgenda.js dist/hv-react-agenda.min.js",
+    "examples": "webpack-dev-server --config examples/webpack.config.js --no-info --content-base examples",
+    "test": "jsxhint . && karma start"
+  },
+  "author": "E Brent Nelson",
+  "license": "MIT",
+  "devDependencies": {
+    "karma-firefox-launcher": "~0.1.4",
+    "karma-chrome-launcher": "~0.1.7",
+    "expect": "~1.4.0",
+    "karma-sourcemap-loader": "~0.3.2",
+    "karma-cli": "0.0.4",
+    "webpack": "~1.5.3",
+    "react": "~0.12.2",
+    "bundle-loader": "~0.5.3",
+    "jsxhint": "~0.9.0",
+    "karma-webpack": "~1.5.0",
+    "jsx-loader": "~0.12.2",
+    "webpack-dev-server": "~1.7.0",
+    "karma": "~0.12.31",
+    "karma-mocha": "~0.1.10",
+    "mocha": "~2.1.0",
+  },
+  "keywords": [
+    "react",
+    "agenda",
+    "widget"
+  ],
+  "dependencies": {
+    "moment": "~2.9.0"
+  }
+}
