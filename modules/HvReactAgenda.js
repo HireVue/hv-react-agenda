@@ -3,8 +3,13 @@ var React     = require('react');
 var PropTypes = React.PropTypes;
 
 var DEFAULT_ITEM = {
+  itemName    : '',
   itemKeys    : [],
   itemClasses : ''
+};
+
+var DEFAULT_ITEM_OVERLAY_STYLE = {
+  display: 'none'
 };
 
 function addDomClass(domNode, className) {
@@ -26,6 +31,7 @@ var HvReactAgenda = React.createClass({
     rowsPerHour     : PropTypes.oneOf([1,2,3,4]).isRequired,
     numberOfDays    : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
     itemClasses     : PropTypes.arrayOf(PropTypes.shape({
+      itemName      : PropTypes.string,
       startDateTime : PropTypes.instanceOf(Date),
       endDateTime   : PropTypes.instanceOf(Date),
       classNames    : PropTypes.string
@@ -45,7 +51,8 @@ var HvReactAgenda = React.createClass({
   getInitialState: function() {
     return {
       date: moment(),
-      itemClasses: {}
+      itemClasses: {},
+      itemOverlayStyles: {}
     }
   },
 
@@ -97,12 +104,16 @@ var HvReactAgenda = React.createClass({
         itemKeys.push(key);
       }
 
+      var defaultStyles = {};
       itemKeys.forEach(function(key) {
         itemClassesMap[key] = {
+          itemName    : itemClass.itemName,
           itemKeys    : itemKeys,
           itemClasses : (itemClassesMap[key]) ? (itemClassesMap[key].itemClasses + ' ' + itemClass.classNames) : (itemClass.classNames || '')
         }
+        defaultStyles[key] = DEFAULT_ITEM_OVERLAY_STYLE;
       });
+      this.setState({itemOverlayStyles: defaultStyles});
     }, this);
     return itemClassesMap;
   },
@@ -137,7 +148,17 @@ var HvReactAgenda = React.createClass({
     return cells;
   },
 
-  handleMouseOver: function(cell) {
+  getItemOverlayStyle: function(cellKey) {
+    if (this.state.itemOverlayStyles[cellKey]) {
+      return this.state.itemOverlayStyles[cellKey];
+    } else {
+      return {
+        display: 'none'
+      }
+    }
+  },
+
+  handleMouseEnter: function(cell) {
     if (cell.item.itemKeys.length) {
       var firstHovered;
       var lastHovered;
@@ -153,10 +174,25 @@ var HvReactAgenda = React.createClass({
           addDomClass(node, '--hovered-last');
         }
       }, this);
+
+      var newStyles = {};
+      newStyles[cell.cellKey] = {
+        display: 'block',
+        position: 'absolute',
+        width: firstHovered.offsetWidth,
+        textAlign: 'center',
+        height: 0,
+        lineHeight: 0,
+        overflow: 'visible',
+        border: 'none',
+        top: firstHovered.getBoundingClientRect().top + ((lastHovered.getBoundingClientRect().bottom - firstHovered.getBoundingClientRect().top)/2)
+      };
+
+      this.setState({itemOverlayStyles: newStyles});
     }
   },
 
-  handleMouseOut: function(cell) {
+  handleMouseLeave: function(cell) {
     if (cell.item.itemKeys.length) {
       cell.item.itemKeys.forEach(function(key, i) {
         var node = this.refs[key].getDOMNode();
@@ -164,6 +200,13 @@ var HvReactAgenda = React.createClass({
         removeDomClass(node, '--hovered-last');
         removeDomClass(node, '--hovered');
       }, this);
+
+      var newStyles = {};
+      newStyles[cell.cellKey] = {
+        display: 'none'
+      };
+
+      this.setState({itemOverlayStyles: newStyles});
     }
   },
 
@@ -200,10 +243,12 @@ var HvReactAgenda = React.createClass({
       return (
         <td
           ref={cell.cellKey}
-          onMouseOver={this.handleMouseOver.bind(this, cell)}
-          onMouseOut={this.handleMouseOut.bind(this, cell)}
+          onMouseEnter={this.handleMouseEnter.bind(this, cell)}
+          onMouseLeave={this.handleMouseLeave.bind(this, cell)}
           className={"agenda__cell " + cell.item.itemClasses}
-        ></td>
+        >
+          <div style={this.getItemOverlayStyle(cell.cellKey)} className="agenda__item-overlay-title">{cell.item.itemName}</div>
+        </td>
       );
     };
 

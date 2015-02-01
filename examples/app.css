@@ -2,6 +2,10 @@
 
 * {
   font-family: 'Raleway';
+  font-size: 16px;
+   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .agenda {
@@ -137,4 +141,8 @@
 
 .agenda__cell.\--hovered-last {
   border-bottom: 8px solid green !important;
+}
+
+.agenda__item-overlay-title {
+  margin-top: -8px;
 }
