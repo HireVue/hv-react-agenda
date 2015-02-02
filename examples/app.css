@@ -1,5 +1,19 @@
 @import url(http://fonts.googleapis.com/css?family=Raleway:400,100,900,200,500,300,600,700,800);
 
+/*
+
+
+
+
+
+
+
+
+.agenda__item-overlay-title {
+  margin-top: -8px;
+}
+*/
+
 * {
   font-family: 'Raleway';
   font-size: 16px;
@@ -11,15 +25,7 @@
 .agenda {
   position: relative;
   border: 1px solid #e3e3e3;
-  padding-top: 69px;
-  background: rgb(112,112,112);
   margin-bottom: 20px;
-  width: 1120px;
-}
-
-.agenda__frame {
-  overflow-y: auto;
-  height: 850px;
   width: 1120px;
 }
 
@@ -27,12 +33,70 @@
   border-spacing: 0;
   width: 100%;
   table-layout: fixed;
+  width: 1120px;
+  overflow-y: auto;
 }
 
-.agenda__row.\--hour-start > .agenda__cell {
-  border-top: 1px solid rgb(218,218,218);
+.agenda thead th {
+  height: 69px;
+  padding: 0;
 }
 
+.agenda tbody {
+  height: 850px;
+}
+
+/**
+ *  Time Cell Styles
+ **/
+.agenda__cell.\--time {
+  vertical-align: top;
+  text-align: center;
+  height: 60px;
+  border: none !important;
+  background: #FFF;
+}
+
+/**
+ *  Controls Cells Styles
+ **/
+.agenda__cell.\--controls {
+  width: 100px;
+  border: none !important;
+}
+
+.agenda__cell.\--controls .agenda__prev span {
+  display: none;
+}
+
+.agenda__cell.\--controls .agenda__next span {
+  display: none;
+}
+
+.agenda__cell.\--controls .agenda__prev:before {
+  font-family: FontAwesome;
+  content: "\f0d9";
+}
+
+.agenda__cell.\--controls .agenda__next:before {
+  font-family: FontAwesome;
+  content: "\f0da";
+}
+
+.agenda__cell.\--controls .agenda__prev,
+.agenda__cell.\--controls .agenda__next {
+  float: left;
+  width: 50px;
+  line-height: 69px;
+  color: #FFF;
+  padding: 0;
+  margin-left: 0;
+  cursor: pointer;
+}
+
+/**
+ * Minute Cell Styles
+ **/
 .agenda__cell {
   border-left: 2px solid rgb(218,218,218);
   border-bottom: 1px solid rgb(218,218,218);
@@ -43,72 +107,30 @@
   box-sizing: border-box;
 }
 
-.agenda__cell.\--time {
-  vertical-align: top;
-  text-align: center;
-  height: 60px;
-  border: none !important;
-  background: #FFF;
-}
-
-.agenda__cell.\--controls {
-  width: 100px;
-  border: none !important;
-}
-
 .agenda__cell.\--head {
   border: none !important;
 }
 
-.agenda__cell.\--head, .agenda__cell.\--controls {
-  height: 0;
-  line-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  color: transparent;
-  border: none;
-  white-space: nowrap;
-  font-weight: normal;
+.agenda__row.\--hour-start > .agenda__cell {
+  border-top: 1px solid rgb(218,218,218);
 }
 
-.agenda__cell.\--head div, .agenda__cell.\--controls div {
-  position: absolute;
-  background: transparent;
-  color: rgb(255,255,255);
-  padding: 0px 25px;
-  top: 0;
-  margin-left: 25px;
-  line-height: 69px;
+.agenda__cell.\--hovered {
+  background: #81B000 !important;
+  border: none !important;
 }
 
-.agenda__cell.\--controls .agenda__prev,
-.agenda__cell.\--controls .agenda__next {
-  width: 50px;
-  height: 69px;
-  color: #FFF;
-  padding: 0;
-  margin-left: 0;
-  cursor: pointer;
+.agenda__cell.\--hovered-first {
+  border-top: 8px solid green !important;
 }
 
-.agenda__cell.\--controls .agenda__prev {
-  left: 0;
+.agenda__cell.\--hovered-last {
+  border-bottom: 8px solid green !important;
 }
 
-.agenda__cell.\--controls .agenda__prev:before {
-  font-family: FontAwesome;
-  content: "\f0d9";
-}
-
-.agenda__cell.\--controls .agenda__next {
-  left: 50px;
-}
-
-.agenda__cell.\--controls .agenda__next:before {
-  font-family: FontAwesome;
-  content: "\f0da";
-}
-
+/**
+ * Item Styles
+ **/
 .agenda__cell.snorlax {
   background: #005B67;
 }
@@ -130,19 +152,3 @@
   border-right: 3px solid #666;
 }
 
-.agenda__cell.\--hovered {
-  background: #81B000;
-  border: none !important;
-}
-
-.agenda__cell.\--hovered-first {
-  border-top: 8px solid green !important;
-}
-
-.agenda__cell.\--hovered-last {
-  border-bottom: 8px solid green !important;
-}
-
-.agenda__item-overlay-title {
-  margin-top: -8px;
-}
