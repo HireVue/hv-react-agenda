@@ -22,6 +22,15 @@ var items = [
     classes       : 'outline'
   },
   {
+    name          : 'Select this time',
+    startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 16, 06),
+    endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 18, 56),
+    classes       : 'outline red',
+    extra         : {
+      other: 'data'
+    }
+  },
+  {
     name          : 'Pikachu, I choose you!',
     startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+3, 9, 35),
     endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+3, 11, 49),
@@ -37,10 +46,14 @@ var items = [
 
 var App = React.createClass({
 
+  handleItemSelection: function(item) {
+    console.log("you selected:", item);
+  },
+
   render: function() {
     return (
       <div>
-        <HvReactAgenda startDate={now} startAtTime={7} items={items} fixedHeader={true} />
+        <HvReactAgenda startDate={now} startAtTime={7} items={items} fixedHeader={true} onItemSelect={this.handleItemSelection} />
       </div>
     )
   }

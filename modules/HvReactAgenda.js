@@ -111,11 +111,10 @@ var HvReactAgenda = React.createClass({
       }
 
       cellRefs.forEach(function(ref) {
-        itemsMap[ref] = {
-          name     : item.name,
-          classes  : (itemsMap[ref]) ? (itemsMap[ref].classes + ' ' + item.classes) : (item.classes || ''),
-          cellRefs : cellRefs
-        }
+        var newItem = _.omit(item, 'classes');
+        newItem.classes  = (itemsMap[ref]) ? (itemsMap[ref].classes + ' ' + item.classes) : (item.classes || '');
+        newItem.cellRefs = cellRefs;
+        itemsMap[ref] = newItem;
       });
     }, this);
 
@@ -189,18 +188,6 @@ var HvReactAgenda = React.createClass({
     if (cell.item) {
       this.setState({highlightedCells: cell.item.cellRefs});
     }
-      //if (cell.item.cellRefs.length) {
-      //  cell.item.itemKeys.forEach(function(key, i) {
-      //    var node = this.refs[key].getDOMNode();
-      //    addDomClass(node, '--hovered');
-      //    if (i === 0) {
-      //      addDomClass(node, '--hovered-first');
-      //    } else if (i === cell.item.itemKeys.length-1) {
-      //      addDomClass(node, '--hovered-last');
-      //    }
-      //  }, this);
-      //}
-
       /*
       var firstHovered;
       var lastHovered;
@@ -228,20 +215,17 @@ var HvReactAgenda = React.createClass({
   handleMouseLeave: function(cell) {
     this.setState({highlightedCells: []});
     /*
-    if (cell.item.itemKeys.length) {
-      cell.item.itemKeys.forEach(function(key, i) {
-        var node = this.refs[key].getDOMNode();
-        removeDomClass(node, '--hovered-first');
-        removeDomClass(node, '--hovered-last');
-        removeDomClass(node, '--hovered');
-      }, this);
-
       var overlayStyles = this.state.itemOverlayStyles;
       overlayStyles[cell.cellKey].display = 'none';
 
       this.setState({itemOverlayStyles: overlayStyles});
-    }
     */
+  },
+
+  handleMouseClick: function(cell) {
+    if (this.props.onItemSelect) {
+      this.props.onItemSelect(_.omit(cell.item, 'cellRefs'));
+    }
   },
 
   render: function() {
@@ -300,6 +284,7 @@ var HvReactAgenda = React.createClass({
           key={"cell-" + i}
           onMouseEnter={this.handleMouseEnter.bind(this, cell)}
           onMouseLeave={this.handleMouseLeave.bind(this, cell)}
+          onClick={this.handleMouseClick.bind(this, cell)}
           className={classSet}
         >
           <div style={this.getItemOverlayStyle(cell.item.id)} className="agenda__item-overlay-title">{cell.item.name}</div>

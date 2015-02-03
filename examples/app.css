@@ -140,3 +140,7 @@
   border-right: 3px solid #666;
 }
 
+.agenda__cell.outline.red {
+  border-left: 3px solid #F00;
+  border-right: 3px solid #F00;
+}
