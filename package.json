@@ -37,13 +37,15 @@
     "webpack-dev-server": "~1.7.0",
     "karma": "~0.12.31",
     "karma-mocha": "~0.1.10",
-    "mocha": "~2.1.0",
-    "moment": "~2.9.0",
-    "lodash": "~3.0.1"
+    "mocha": "~2.1.0"
   },
   "keywords": [
     "react",
     "agenda",
     "widget"
-  ]
+  ],
+  "dependencies": {
+    "moment": "~2.9.0",
+    "lodash": "~3.0.1"
+  }
 }
