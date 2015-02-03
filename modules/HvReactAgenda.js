@@ -1,6 +1,7 @@
 var moment    = require('moment');
 var React     = require('react/addons');
 var PropTypes = React.PropTypes;
+var _         = require('lodash');
 
 var DEFAULT_ITEM = {
   id       : null,
@@ -11,18 +12,6 @@ var DEFAULT_ITEM = {
   lastRef  : null
 };
 
-/*
-function addDomClass(domNode, className) {
-  removeDomClass(domNode, className); // dedupe
-  domNode.className += ' ' + className;
-}
-
-function removeDomClass(domNode, className) {
-  var classNames = domNode.className.replace(new RegExp(' ' + className, 'g'), '');
-  domNode.className = classNames;
-}
-*/
-
 var HvReactAgenda = React.createClass({
 
   propTypes: {
@@ -31,6 +20,7 @@ var HvReactAgenda = React.createClass({
     startAtTime     : PropTypes.number.isRequired,
     rowsPerHour     : PropTypes.oneOf([1,2,3,4]).isRequired,
     numberOfDays    : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
+    fixedHeader     : PropTypes.bool,
     items           : PropTypes.arrayOf(PropTypes.shape({
       name          : PropTypes.string,
       startDateTime : PropTypes.instanceOf(Date).isRequired,
@@ -58,14 +48,6 @@ var HvReactAgenda = React.createClass({
     }
   },
 
-  componentDidMount: function() {
-    // move to start time (this only happens once)
-    var scrollContainer = this.refs.scrollContainer.getDOMNode();
-    var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
-
-    scrollContainer.scrollTop = rowToScrollTo.offsetTop;
-  },
-
   componentWillMount: function() {
     if (this.props.startDate) {
       this.setState({date: moment(this.props.startDate)});
@@ -73,6 +55,30 @@ var HvReactAgenda = React.createClass({
 
     if (this.props.items) {
       this.setState({items: this.mapItems(this.props.items)});
+    }
+  },
+
+  componentDidMount: function() {
+    // move to start time (this only happens once)
+    var scrollContainer = this.refs.agendaContainer.getDOMNode();
+    var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
+
+    scrollContainer.scrollTop = rowToScrollTo.offsetTop - this.state.headerHeight;
+
+    if (window.addEventListener) {
+      window.addEventListener("resize", this.buildFixedHeader);
+    } else {
+      window.attachEvent("resize", this.buildFixedHeader);
+    }
+
+    this.buildFixedHeader();
+  },
+
+  componentWillUnmount: function() {
+    if (window.removeEventListener) {
+      window.removeEventListener("resize", this.buildFixedHeader);
+    } else {
+      window.deattachEvent("resize", this.buildFixedHeader);
     }
   },
 
@@ -121,6 +127,19 @@ var HvReactAgenda = React.createClass({
     return itemsMap;
   },
 
+  buildFixedHeader: function() {
+    for (var i = 0; i < this.props.numberOfDays+1; i++) {
+      var spec = this.refs['column-spec-'+i].getDOMNode();
+      var node = this.refs['column-'+i].getDOMNode();
+
+      if (!this.state.headerHeight) {
+        this.setState({headerHeight: node.offsetHeight});
+      }
+
+      node.style.width = spec.offsetWidth + "px";
+    }
+  },
+
   getHeaderColumns: function() {
     var cols = [];
     for (var i = 0; i < this.props.numberOfDays; i++) {
@@ -157,6 +176,13 @@ var HvReactAgenda = React.createClass({
       return {
         display: 'none'
       }
+    }
+  },
+
+  getHeaderStyle: function() {
+    return {
+      position  : this.props.fixedHeader ? 'fixed' : 'absolute',
+      marginTop : this.state.headerHeight * -1
     }
   },
 
@@ -223,9 +249,20 @@ var HvReactAgenda = React.createClass({
 
     var renderHeaderColumns = function(col, i) {
       return (
-        <th key={"col-" + i} className="agenda__cell --head">
+        <th ref={"column-" + (i+1)} key={"col-" + i} className="agenda__cell --head">
           {moment(col).format('ddd M\/D')}
         </th>
+      );
+    };
+
+    var renderHeaderSpecColumns = function(col, i) {
+      var classSet = React.addons.classSet({
+        'agenda__cell' : true,
+        '--controls'   : (i === 0),
+        '--head'       : (i !== 0)
+      });
+      return (
+        <th ref={"column-spec-" + i} key={"col-spec-" + i} className={classSet}></th>
       );
     };
 
@@ -272,18 +309,21 @@ var HvReactAgenda = React.createClass({
     };
 
     return (
-      <div className="agenda">
-        <table>
-          <thead>
+      <div ref="agendaContainer" className="agenda">
+        <table className="agenda__table">
+          <thead className="agenda__header">
             <tr>
-              <th className="agenda__cell --controls">
+              {_.range(this.props.numberOfDays+1).map(renderHeaderSpecColumns)}
+            </tr>
+            <tr style={this.getHeaderStyle()}>
+              <th ref="column-0" className="agenda__cell --controls">
                 <div className="agenda__prev" onClick={this.prevRange}><span>&laquo;</span></div>
                 <div className="agenda__next" onClick={this.nextRange}><span>&raquo;</span></div>
               </th>
               {this.getHeaderColumns().map(renderHeaderColumns)}
             </tr>
           </thead>
-          <tbody ref="scrollContainer">
+          <tbody className="agenda__body">
             {this.getBodyRows().map(renderBodyRows, this)}
           </tbody>
         </table>

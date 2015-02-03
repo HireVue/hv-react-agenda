@@ -38,7 +38,8 @@
     "karma": "~0.12.31",
     "karma-mocha": "~0.1.10",
     "mocha": "~2.1.0",
-    "moment": "~2.9.0"
+    "moment": "~2.9.0",
+    "lodash": "~3.0.1"
   },
   "keywords": [
     "react",

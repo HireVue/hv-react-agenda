@@ -40,7 +40,7 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <HvReactAgenda startDate={now} startAtTime={7} items={items} />
+        <HvReactAgenda startDate={now} startAtTime={7} items={items} fixedHeader={true} />
       </div>
     )
   }

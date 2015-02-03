@@ -1,19 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Raleway:400,100,900,200,500,300,600,700,800);
 
-/*
-
-
-
-
-
-
-
-
-.agenda__item-overlay-title {
-  margin-top: -8px;
-}
-*/
-
 * {
   font-family: 'Raleway';
   font-size: 16px;
@@ -22,28 +8,36 @@
   box-sizing: border-box;
 }
 
+/**
+ *  Table Styles
+ **/
 .agenda {
   position: relative;
   border: 1px solid #e3e3e3;
   margin-bottom: 20px;
-  width: 1120px;
+  width: 100%;
+  height: 850px;
+  overflow: auto;
 }
 
-.agenda table {
+.agenda__table {
   border-spacing: 0;
   width: 100%;
   table-layout: fixed;
-  width: 1120px;
-  overflow-y: auto;
 }
 
-.agenda thead th {
+/**
+ *  Header Styles
+ **/
+.agenda__cell.\--head {
+  border-right: none;
+  border-left: none;
+  border-top: 1px solid rgb(218,218,218);
+}
+
+.agenda__header .agenda__cell {
   height: 69px;
   padding: 0;
-}
-
-.agenda tbody {
-  height: 850px;
 }
 
 /**
@@ -62,7 +56,9 @@
  **/
 .agenda__cell.\--controls {
   width: 100px;
-  border: none !important;
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid rgb(218,218,218);
 }
 
 .agenda__cell.\--controls .agenda__prev span {
@@ -88,7 +84,6 @@
   float: left;
   width: 50px;
   line-height: 69px;
-  color: #FFF;
   padding: 0;
   margin-left: 0;
   cursor: pointer;
@@ -102,13 +97,6 @@
   border-bottom: 1px solid rgb(218,218,218);
   height: 15px;
   background: rgb(240,240,240);
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-.agenda__cell.\--head {
-  border: none !important;
 }
 
 .agenda__row.\--hour-start > .agenda__cell {
