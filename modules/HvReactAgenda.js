@@ -61,8 +61,9 @@ var HvReactAgenda = React.createClass({
     var scrollContainer = this.refs.agendaContainer.getDOMNode();
     var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
 
-    this.setState({headerHeight: this.refs['column-spec-0'].getDOMNode().offsetHeight});
-    scrollContainer.scrollTop = rowToScrollTo.offsetTop - this.setState.headerHeight;
+    var headerHeight = this.refs['column-spec-0'].getDOMNode().offsetHeight;
+    this.setState({headerHeight: headerHeight});
+    scrollContainer.scrollTop = rowToScrollTo.offsetTop - headerHeight;
 
     if (window.addEventListener) {
       window.addEventListener("resize", this.buildFixedHeader);
