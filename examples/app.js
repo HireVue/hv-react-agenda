@@ -17,7 +17,7 @@ var items = [
   },
   {
     name          : 'Select this time',
-    startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 12, 56),
+    startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 14, 06),
     endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 16, 56),
     classes       : 'outline'
   },

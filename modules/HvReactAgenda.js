@@ -7,9 +7,7 @@ var DEFAULT_ITEM = {
   id       : null,
   name     : '',
   classes  : '',
-  cellRefs : [],
-  firstRef : null,
-  lastRef  : null
+  cellRefs : []
 };
 
 var HvReactAgenda = React.createClass({
@@ -44,7 +42,7 @@ var HvReactAgenda = React.createClass({
       date              : moment(),
       items             : {},
       itemOverlayStyles : {},
-      hoveredItemId     : ''
+      highlightedCells  : []
     }
   },
 
@@ -63,7 +61,7 @@ var HvReactAgenda = React.createClass({
     var scrollContainer = this.refs.agendaContainer.getDOMNode();
     var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
 
-    scrollContainer.scrollTop = rowToScrollTo.offsetTop - this.state.headerHeight;
+    scrollContainer.scrollTop = rowToScrollTo.offsetTop - this.getHeaderHeight();
 
     if (window.addEventListener) {
       window.addEventListener("resize", this.buildFixedHeader);
@@ -114,12 +112,9 @@ var HvReactAgenda = React.createClass({
 
       cellRefs.forEach(function(ref) {
         itemsMap[ref] = {
-          id       : 'item-' + moment(start).format('YYYYMMDDHHmmss') + '-' + moment(end).format('YYYYMMDDHHmmss'),
           name     : item.name,
           classes  : (itemsMap[ref]) ? (itemsMap[ref].classes + ' ' + item.classes) : (item.classes || ''),
-          cellRefs : cellRefs,
-          firstRef : cellRefs[0],
-          lastRef  : cellRefs[cellRefs.length-1]
+          cellRefs : cellRefs
         }
       });
     }, this);
@@ -131,10 +126,6 @@ var HvReactAgenda = React.createClass({
     for (var i = 0; i < this.props.numberOfDays+1; i++) {
       var spec = this.refs['column-spec-'+i].getDOMNode();
       var node = this.refs['column-'+i].getDOMNode();
-
-      if (!this.state.headerHeight) {
-        this.setState({headerHeight: node.offsetHeight});
-      }
 
       node.style.width = spec.offsetWidth + "px";
     }
@@ -179,16 +170,24 @@ var HvReactAgenda = React.createClass({
     }
   },
 
+  getHeaderHeight: function() {
+    if (this.refs['column-spec-0'] && !this.state.headerHeight) {
+      this.setState({headerHeight: this.refs['column-spec-0'].getDOMNode().offsetHeight});
+    }
+
+    return this.state.headerHeight;
+  },
+
   getHeaderStyle: function() {
     return {
       position  : this.props.fixedHeader ? 'fixed' : 'absolute',
-      marginTop : this.state.headerHeight * -1
+      marginTop : this.getHeaderHeight() * -1
     }
   },
 
   handleMouseEnter: function(cell) {
-    if (cell.item.id) {
-      this.setState({hoveredItemId: cell.item.id});
+    if (cell.item) {
+      this.setState({highlightedCells: cell.item.cellRefs});
     }
       //if (cell.item.cellRefs.length) {
       //  cell.item.itemKeys.forEach(function(key, i) {
@@ -227,7 +226,7 @@ var HvReactAgenda = React.createClass({
   },
 
   handleMouseLeave: function(cell) {
-    this.setState({hoveredItemId: -1});
+    this.setState({highlightedCells: []});
     /*
     if (cell.item.itemKeys.length) {
       cell.item.itemKeys.forEach(function(key, i) {
@@ -287,9 +286,9 @@ var HvReactAgenda = React.createClass({
     var renderMinuteCells = function(cell, i) {
       var cellClasses = {
         'agenda__cell'      : true,
-        '--hovered'         : (this.state.hoveredItemId === cell.item.id),
-        '--hovered-first'   : (this.state.hoveredItemId === cell.item.id) && (cell.item.firstRef === cell.cellRef),
-        '--hovered-last'    : (this.state.hoveredItemId === cell.item.id) && (cell.item.lastRef  === cell.cellRef)
+        '--hovered'         : _.contains(this.state.highlightedCells, cell.cellRef),
+        '--hovered-first'   : _.contains(this.state.highlightedCells, cell.cellRef) && (_.first(this.state.highlightedCells) === cell.cellRef),
+        '--hovered-last'    : _.contains(this.state.highlightedCells, cell.cellRef) && (_.last(this.state.highlightedCells)  === cell.cellRef)
       };
       cellClasses[cell.item.classes] = true;
 
