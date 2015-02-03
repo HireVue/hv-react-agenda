@@ -66,8 +66,10 @@ var HvReactAgenda = React.createClass({
 
     if (window.addEventListener) {
       window.addEventListener("resize", this.buildFixedHeader);
+      window.addEventListener("scroll", this.updateAgendaPosition);
     } else {
       window.attachEvent("resize", this.buildFixedHeader);
+      window.attachEvent("scroll", this.updateAgendaPosition);
     }
 
     this.buildFixedHeader();
@@ -76,8 +78,10 @@ var HvReactAgenda = React.createClass({
   componentWillUnmount: function() {
     if (window.removeEventListener) {
       window.removeEventListener("resize", this.buildFixedHeader);
+      window.removeEventListener("scroll", this.updateAgendaPosition);
     } else {
       window.deattachEvent("resize", this.buildFixedHeader);
+      window.deattachEvent("scroll", this.updateAgendaPosition);
     }
   },
 
@@ -85,6 +89,11 @@ var HvReactAgenda = React.createClass({
     if (this.props.items) {
       this.setState({items: this.mapItems(this.props.items)});
     }
+  },
+
+  updateAgendaPosition: function() {
+    var node = this.refs['agendaContainer'].getDOMNode();
+    this.setState({agendaPosition: node.getBoundingClientRect()});
   },
 
   nextRange: function() {
@@ -192,11 +201,18 @@ var HvReactAgenda = React.createClass({
   },
 
   getHeaderStyle: function() {
-    return {
-      position  : this.props.fixedHeader ? 'fixed' : 'absolute',
-      marginTop : this.getHeaderHeight() * -1,
+    var headerStyles = {
+      position: this.props.fixedHeader ? 'fixed' : 'absolute',
       zIndex: 2
+    };
+
+    if (this.state.agendaPosition) {
+      headerStyles.top  = this.state.agendaPosition.top;
+    } else {
+      headerStyles.marginTop = this.getHeaderHeight() * -1;
     }
+
+    return headerStyles;
   },
 
   handleMouseEnter: function(cell) {
