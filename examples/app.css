@@ -104,6 +104,7 @@
 }
 
 .agenda__cell.\--hovered {
+  cursor: pointer;
   background: #81B000 !important;
   border: none !important;
 }
@@ -129,6 +130,10 @@
 
 .agenda__cell.pikachu {
   background: #FFDA00;
+}
+
+.agenda__cell.pikachu .agenda__item-overlay-title {
+  margin-top: -18px;
 }
 
 .agenda__cell.charizard {

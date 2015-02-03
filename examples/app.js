@@ -31,7 +31,7 @@ var items = [
     }
   },
   {
-    name          : 'Pikachu, I choose you!',
+    name          : 'Pikachu, I choose you! Gotta catch them all Pokemon!',
     startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+3, 9, 35),
     endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+3, 11, 49),
     classes       : 'pikachu'

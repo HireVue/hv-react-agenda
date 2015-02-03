@@ -42,7 +42,8 @@ var HvReactAgenda = React.createClass({
       date              : moment(),
       items             : {},
       itemOverlayStyles : {},
-      highlightedCells  : []
+      highlightedCells  : [],
+      focusedCell       : null
     }
   },
 
@@ -159,13 +160,26 @@ var HvReactAgenda = React.createClass({
     return cells;
   },
 
-  getItemOverlayStyle: function(itemId) {
-    if (this.state.itemOverlayStyles[itemId]) {
-      return this.state.itemOverlayStyles[itemId];
+  getItemOverlayStyle: function(cellRef) {
+    if (this.state.focusedCell === cellRef && _.contains(this.state.highlightedCells, cellRef)) {
+      var firstCell   = this.refs[_.first(this.state.highlightedCells)].getDOMNode();
+      var lastCell    = this.refs[_.last(this.state.highlightedCells)].getDOMNode();
+
+      var firstCellY  = firstCell.offsetTop - firstCell.scrollTop + firstCell.clientTop;
+      var lastCellY   = lastCell.offsetTop - lastCell.scrollTop + lastCell.clientTop;
+
+      return {
+        display: 'block',
+        zIndex: 1,
+        position: 'absolute',
+        width: firstCell.offsetWidth,
+        textAlign: 'center',
+        top: firstCellY + ((lastCellY-firstCellY)/2)
+      };
     } else {
       return {
         display: 'none'
-      }
+      };
     }
   },
 
@@ -180,46 +194,21 @@ var HvReactAgenda = React.createClass({
   getHeaderStyle: function() {
     return {
       position  : this.props.fixedHeader ? 'fixed' : 'absolute',
-      marginTop : this.getHeaderHeight() * -1
+      marginTop : this.getHeaderHeight() * -1,
+      zIndex: 2
     }
   },
 
   handleMouseEnter: function(cell) {
     if (cell.item) {
+      this.setState({focusedCell: cell.cellRef});
       this.setState({highlightedCells: cell.item.cellRefs});
     }
-      /*
-      var firstHovered;
-      var lastHovered;
-
-      firstHovered = node;
-      lastHovered = node;
-
-      var overlayStyles = this.state.itemOverlayStyles;
-      overlayStyles[cell.cellKey] = {
-        display    : 'block',
-        position   : 'absolute',
-        width      : firstHovered.offsetWidth,
-        textAlign  : 'center',
-        height     : 0,
-        lineHeight : 0,
-        overflow   : 'visible',
-        border     : 'none',
-        top        : firstHovered.getBoundingClientRect().top + ((lastHovered.getBoundingClientRect().bottom - firstHovered.getBoundingClientRect().top)/2)
-      };
-
-      this.setState({itemOverlayStyles: overlayStyles});
-      */
   },
 
   handleMouseLeave: function(cell) {
+    this.setState({focusedCell: null});
     this.setState({highlightedCells: []});
-    /*
-      var overlayStyles = this.state.itemOverlayStyles;
-      overlayStyles[cell.cellKey].display = 'none';
-
-      this.setState({itemOverlayStyles: overlayStyles});
-    */
   },
 
   handleMouseClick: function(cell) {
@@ -287,7 +276,11 @@ var HvReactAgenda = React.createClass({
           onClick={this.handleMouseClick.bind(this, cell)}
           className={classSet}
         >
-          <div style={this.getItemOverlayStyle(cell.item.id)} className="agenda__item-overlay-title">{cell.item.name}</div>
+          <div
+            style={this.getItemOverlayStyle(cell.cellRef)}
+            className="agenda__item-overlay-title">
+              {cell.item.name}
+          </div>
         </td>
       );
     };
