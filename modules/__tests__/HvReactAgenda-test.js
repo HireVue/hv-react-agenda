@@ -10,7 +10,6 @@ function createAgenda(props) {
   props.startAtTime  = props.startAtTime  || 8;
   props.rowsPerHour  = props.rowsPerHour  || 4;
   props.numberOfDays = props.numberOfDays || 5;
-  props.fixedHeader  = props.fixedHeader  || null;
   props.items        = props.items        || null;
   props.onItemSelect = props.onItemSelect || null;
 
@@ -21,7 +20,6 @@ function createAgenda(props) {
       startAtTime={props.startAtTime}
       rowsPerHour={props.rowsPerHour}
       numberOfDays={props.numberOfDays}
-      fixedHeader={props.fixedHeader}
       items={props.items}
       onItemSelect={props.onItemSelect}
     />
@@ -35,7 +33,7 @@ describe('HvReactAgenda', function() {
     it('should go to the next timespan when next button clicked', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda());
       TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__next')[0]);
-      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__table --head')[0].childNodes[1].childNodes[1].innerHTML;
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
       assert.equal(colLabel, "Fri 2/6");
       done();
     });
@@ -43,7 +41,7 @@ describe('HvReactAgenda', function() {
     it('should go to the previous timespan when the previous button clicked', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda());
       TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
-      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__header')[0].childNodes[1].childNodes[1].innerHTML;
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
       assert.equal(colLabel, "Tue 1/27");
       done();
     });
@@ -54,7 +52,7 @@ describe('HvReactAgenda', function() {
 
     it('should default to english header', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda());
-      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__header')[0].childNodes[1].childNodes[1].innerHTML;
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
       assert.equal(colLabel, "Sun 2/1");
       done();
     });
@@ -68,7 +66,7 @@ describe('HvReactAgenda', function() {
 
     it('should localize header when given a locale', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({locale: 'de'}));
-      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__header')[0].childNodes[1].childNodes[1].innerHTML;
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
       assert.equal(colLabel, "So. 2/1");
       done();
     });
@@ -82,7 +80,7 @@ describe('HvReactAgenda', function() {
 
     it('should allow for explicit setting of start date', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({currentDate: new Date(2014, 6, 1)}));
-      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__header')[0].childNodes[1].childNodes[1].innerHTML;
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
       assert.equal(colLabel, "Sun 2/1");
       done();
     });
@@ -90,84 +88,77 @@ describe('HvReactAgenda', function() {
     it('should allow 1 rows per hour', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({rowsPerHour: 1}));
       var minuteCells = agenda.getDOMNode().getElementsByClassName('agenda__cell');
-      assert.equal(minuteCells.length, 156);
+      assert.equal(minuteCells.length, 150);
       done();
     });
 
     it('should allow 2 rows per hour', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({rowsPerHour: 2}));
       var minuteCells = agenda.getDOMNode().getElementsByClassName('agenda__cell');
-      assert.equal(minuteCells.length, 276);
+      assert.equal(minuteCells.length, 270);
       done();
     });
 
     it('should allow 3 rows per hour', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({rowsPerHour: 3}));
       var minuteCells = agenda.getDOMNode().getElementsByClassName('agenda__cell');
-      assert.equal(minuteCells.length, 396);
+      assert.equal(minuteCells.length, 390);
       done();
     });
 
     it('should allow 4 rows per hour', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({rowsPerHour: 4}));
       var minuteCells = agenda.getDOMNode().getElementsByClassName('agenda__cell');
-      assert.equal(minuteCells.length, 516);
+      assert.equal(minuteCells.length, 510);
       done();
     });
 
     it('should allow 1 day', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({numberOfDays: 1}));
       var headerCells = agenda.getDOMNode().getElementsByClassName('agenda__cell --head');
-      assert.equal(headerCells.length, 2); // spec and real
+      assert.equal(headerCells.length, 1);
       done();
     });
 
     it('should allow 2 days', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({numberOfDays: 2}));
       var headerCells = agenda.getDOMNode().getElementsByClassName('agenda__cell --head');
-      assert.equal(headerCells.length, 4); // spec and real
+      assert.equal(headerCells.length, 2);
       done();
     });
 
     it('should allow 3 day', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({numberOfDays: 3}));
       var headerCells = agenda.getDOMNode().getElementsByClassName('agenda__cell --head');
-      assert.equal(headerCells.length, 6); // spec and real
+      assert.equal(headerCells.length, 3);
       done();
     });
 
     it('should allow 4 day', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({numberOfDays: 4}));
       var headerCells = agenda.getDOMNode().getElementsByClassName('agenda__cell --head');
-      assert.equal(headerCells.length, 8); // spec and real
+      assert.equal(headerCells.length, 4);
       done();
     });
 
     it('should allow 5 day', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({numberOfDays: 5}));
       var headerCells = agenda.getDOMNode().getElementsByClassName('agenda__cell --head');
-      assert.equal(headerCells.length, 10); // spec and real
+      assert.equal(headerCells.length, 5);
       done();
     });
 
     it('should allow 6 day', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({numberOfDays: 6}));
       var headerCells = agenda.getDOMNode().getElementsByClassName('agenda__cell --head');
-      assert.equal(headerCells.length, 12); // spec and real
+      assert.equal(headerCells.length, 6);
       done();
     });
 
     it('should allow 7 day', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({numberOfDays: 7}));
       var headerCells = agenda.getDOMNode().getElementsByClassName('agenda__cell --head');
-      assert.equal(headerCells.length, 14); // spec and real
-      done();
-    });
-
-    it('should support having a fixed header', function(done) {
-      var agenda = TestUtils.renderIntoDocument(createAgenda({fixedHeader: true}));
-      var headerStyle = agenda.getDOMNode().getElementsByClassName('agenda__header')[0].childNodes[1].style.position;
-      assert.equal(headerStyle, 'fixed');
+      assert.equal(headerCells.length, 7);
       done();
     });
 
@@ -231,7 +222,7 @@ describe('HvReactAgenda', function() {
         }
       };
       var agenda = TestUtils.renderIntoDocument(createAgenda(props));
-      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__cell')[202]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__cell')[196]);
       assert.equal(result.name, item.name);
       assert.equal(result.classes, item.classes);
       assert.equal(result.extra, item.extra);

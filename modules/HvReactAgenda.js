@@ -1,7 +1,7 @@
 var moment    = require('moment');
 var React     = require('react/addons');
 var PropTypes = React.PropTypes;
-var _         = require('lodash');
+var _         = require('underscore');
 
 var DEFAULT_ITEM = {
   name     : '',

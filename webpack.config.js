@@ -30,7 +30,9 @@ module.exports = {
   },
 
   externals: {
-    react: 'React'
+    'react/addons': 'React',
+    moment: 'moment',
+    underscore: '_'
   },
 
   node: {
