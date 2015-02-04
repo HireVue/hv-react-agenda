@@ -12,18 +12,19 @@
  *  Table Styles
  **/
 .agenda {
-  position: relative;
   border: 1px solid #e3e3e3;
   margin-bottom: 20px;
-  width: 100%;
-  height: 850px;
-  overflow: auto;
 }
 
-.agenda__table {
+.agenda__table > table {
   border-spacing: 0;
   width: 100%;
   table-layout: fixed;
+}
+
+.agenda__table.\--body {
+  height: 850px;
+  overflow: auto;
 }
 
 /**
@@ -32,10 +33,9 @@
 .agenda__cell.\--head {
   border-right: none;
   border-left: none;
-  border-top: 1px solid rgb(218,218,218);
 }
 
-.agenda__header .agenda__cell {
+.agenda__table.\--header .agenda__cell {
   height: 69px;
   padding: 0;
 }
@@ -44,6 +44,7 @@
  *  Time Cell Styles
  **/
 .agenda__cell.\--time {
+  width: 100px;
   vertical-align: top;
   text-align: center;
   height: 60px;
@@ -58,7 +59,6 @@
   width: 100px;
   border-left: none;
   border-right: none;
-  border-top: 1px solid rgb(218,218,218);
 }
 
 .agenda__cell.\--controls .agenda__prev span {

@@ -17,7 +17,6 @@ var HvReactAgenda = React.createClass({
     startAtTime     : PropTypes.number.isRequired,
     rowsPerHour     : PropTypes.oneOf([1,2,3,4]).isRequired,
     numberOfDays    : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
-    fixedHeader     : PropTypes.bool,
     items           : PropTypes.arrayOf(PropTypes.shape({
       name          : PropTypes.string,
       startDateTime : PropTypes.instanceOf(Date).isRequired,
@@ -58,43 +57,15 @@ var HvReactAgenda = React.createClass({
 
   componentDidMount: function() {
     // move to start time (this only happens once)
-    var scrollContainer = this.refs.agendaContainer.getDOMNode();
+    var scrollContainer = this.refs.agendaScrollContainer.getDOMNode();
     var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
-
-    var headerHeight = this.refs['column-spec-0'].getDOMNode().offsetHeight;
-    this.setState({headerHeight: headerHeight});
-    scrollContainer.scrollTop = rowToScrollTo.offsetTop - headerHeight;
-
-    if (window.addEventListener) {
-      window.addEventListener("resize", this.buildFixedHeader);
-      window.addEventListener("scroll", this.updateAgendaPosition);
-    } else {
-      window.attachEvent("resize", this.buildFixedHeader);
-      window.attachEvent("scroll", this.updateAgendaPosition);
-    }
-
-    this.buildFixedHeader();
-  },
-
-  componentWillUnmount: function() {
-    if (window.removeEventListener) {
-      window.removeEventListener("resize", this.buildFixedHeader);
-      window.removeEventListener("scroll", this.updateAgendaPosition);
-    } else {
-      window.deattachEvent("resize", this.buildFixedHeader);
-      window.deattachEvent("scroll", this.updateAgendaPosition);
-    }
+    scrollContainer.scrollTop = rowToScrollTo.offsetTop;
   },
 
   componentWillReceiveProps: function() {
     if (this.props.items) {
       this.setState({items: this.mapItems(this.props.items)});
     }
-  },
-
-  updateAgendaPosition: function() {
-    var node = this.refs.agendaContainer.getDOMNode();
-    this.setState({agendaPosition: node.getBoundingClientRect()});
   },
 
   nextRange: function() {
@@ -130,15 +101,6 @@ var HvReactAgenda = React.createClass({
     }, this);
 
     return itemsMap;
-  },
-
-  buildFixedHeader: function() {
-    for (var i = 0; i < this.props.numberOfDays+1; i++) {
-      var spec = this.refs['column-spec-'+i].getDOMNode();
-      var node = this.refs['column-'+i].getDOMNode();
-
-      node.style.width = spec.offsetWidth + "px";
-    }
   },
 
   getHeaderColumns: function() {
@@ -184,28 +146,13 @@ var HvReactAgenda = React.createClass({
         position: 'absolute',
         width: firstCell.offsetWidth,
         textAlign: 'center',
-        top: firstCellY + ((lastCellY-firstCellY)/2)
+        top: firstCell.offsetTop + ((lastCellY-firstCellY)/2)
       };
     } else {
       return {
         display: 'none'
       };
     }
-  },
-
-  getHeaderStyle: function() {
-    var headerStyles = {
-      position: this.props.fixedHeader ? 'fixed' : 'absolute',
-      zIndex: 2
-    };
-
-    if (this.state.agendaPosition) {
-      headerStyles.top  = this.state.agendaPosition.top;
-    } else {
-      headerStyles.marginTop = this.state.headerHeight * -1;
-    }
-
-    return headerStyles;
   },
 
   handleMouseEnter: function(cell) {
@@ -235,17 +182,6 @@ var HvReactAgenda = React.createClass({
         <th ref={"column-" + (i+1)} key={"col-" + i} className="agenda__cell --head">
           {headerLabel.format('ddd M\/D')}
         </th>
-      );
-    };
-
-    var renderHeaderSpecColumns = function(col, i) {
-      var classSet = React.addons.classSet({
-        'agenda__cell' : true,
-        '--controls'   : (i === 0),
-        '--head'       : (i !== 0)
-      });
-      return (
-        <th ref={"column-spec-" + i} key={"col-spec-" + i} className={classSet}></th>
       );
     };
 
@@ -299,24 +235,27 @@ var HvReactAgenda = React.createClass({
     };
 
     return (
-      <div ref="agendaContainer" className="agenda">
-        <table className="agenda__table">
-          <thead className="agenda__header">
-            <tr>
-              {_.range(this.props.numberOfDays+1).map(renderHeaderSpecColumns)}
-            </tr>
-            <tr style={this.getHeaderStyle()}>
-              <th ref="column-0" className="agenda__cell --controls">
-                <div className="agenda__prev" onClick={this.prevRange}><span>&laquo;</span></div>
-                <div className="agenda__next" onClick={this.nextRange}><span>&raquo;</span></div>
-              </th>
-              {this.getHeaderColumns().map(renderHeaderColumns, this)}
-            </tr>
-          </thead>
-          <tbody className="agenda__body">
-            {this.getBodyRows().map(renderBodyRows, this)}
-          </tbody>
-        </table>
+      <div className="agenda">
+        <div className="agenda__table --header">
+          <table>
+            <thead>
+              <tr>
+                <th ref="column-0" className="agenda__cell --controls">
+                  <div className="agenda__prev" onClick={this.prevRange}><span>&laquo;</span></div>
+                  <div className="agenda__next" onClick={this.nextRange}><span>&raquo;</span></div>
+                </th>
+                {this.getHeaderColumns().map(renderHeaderColumns, this)}
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div ref="agendaScrollContainer" className="agenda__table --body" style={{position:'relative'}}>
+          <table>
+            <tbody>
+              {this.getBodyRows().map(renderBodyRows, this)}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }

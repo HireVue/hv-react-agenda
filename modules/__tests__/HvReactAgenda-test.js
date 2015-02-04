@@ -35,7 +35,7 @@ describe('HvReactAgenda', function() {
     it('should go to the next timespan when next button clicked', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda());
       TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__next')[0]);
-      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__header')[0].childNodes[1].childNodes[1].innerHTML;
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__table --head')[0].childNodes[1].childNodes[1].innerHTML;
       assert.equal(colLabel, "Fri 2/6");
       done();
     });
