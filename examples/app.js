@@ -50,10 +50,14 @@ var App = React.createClass({
     console.log("you selected:", item);
   },
 
+  handleDateRangeChange: function(startDate, endDate) {
+    console.log("new date range:", startDate, endDate);
+  },
+
   render: function() {
     return (
       <div>
-        <HvReactAgenda startDate={now} startAtTime={7} items={items} fixedHeader={true} onItemSelect={this.handleItemSelection} />
+        <HvReactAgenda startDate={now} startAtTime={7} items={items} fixedHeader={true} onItemSelect={this.handleItemSelection} onDateRangeChange={this.handleDateRangeChange} />
       </div>
     )
   }

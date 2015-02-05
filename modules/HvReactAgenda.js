@@ -12,18 +12,19 @@ var DEFAULT_ITEM = {
 var HvReactAgenda = React.createClass({
 
   propTypes: {
-    locale          : PropTypes.string.isRequired,
-    startDate       : PropTypes.instanceOf(Date),
-    startAtTime     : PropTypes.number.isRequired,
-    rowsPerHour     : PropTypes.oneOf([1,2,3,4]).isRequired,
-    numberOfDays    : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
-    items           : PropTypes.arrayOf(PropTypes.shape({
-      name          : PropTypes.string,
-      startDateTime : PropTypes.instanceOf(Date).isRequired,
-      endDateTime   : PropTypes.instanceOf(Date).isRequired,
-      classes       : PropTypes.string
+    locale            : PropTypes.string.isRequired,
+    startDate         : PropTypes.instanceOf(Date),
+    startAtTime       : PropTypes.number.isRequired,
+    rowsPerHour       : PropTypes.oneOf([1,2,3,4]).isRequired,
+    numberOfDays      : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
+    items             : PropTypes.arrayOf(PropTypes.shape({
+      name            : PropTypes.string,
+      startDateTime   : PropTypes.instanceOf(Date).isRequired,
+      endDateTime     : PropTypes.instanceOf(Date).isRequired,
+      classes         : PropTypes.string
     })),
-    onItemSelect    : PropTypes.func
+    onItemSelect      : PropTypes.func,
+    onDateRangeChange : PropTypes.func
   },
 
   getDefaultProps: function() {
@@ -74,10 +75,30 @@ var HvReactAgenda = React.createClass({
 
   nextRange: function() {
     this.setState({date: this.state.date.add(this.props.numberOfDays, 'days')});
+
+    var newStart = moment(this.state.date);
+    var newEnd   = moment(newStart).add(this.props.numberOfDays-1, 'days');
+
+    if (this.props.onDateRangeChange) {
+      this.props.onDateRangeChange(
+        newStart.toDate(),
+        newEnd.toDate()
+      );
+    }
   },
 
   prevRange: function() {
     this.setState({date: this.state.date.subtract(this.props.numberOfDays, 'days')});
+
+    var newStart = moment(this.state.date);
+    var newEnd   = moment(newStart).add(this.props.numberOfDays-1, 'days');
+
+    if (this.props.onDateRangeChange) {
+      this.props.onDateRangeChange(
+        newStart.toDate(),
+        newEnd.toDate()
+      );
+    }
   },
 
   mapItems: function(itemsArray) {

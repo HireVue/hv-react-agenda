@@ -4,14 +4,15 @@ var TestUtils     = React.addons.TestUtils;
 var HvReactAgenda = require('../HvReactAgenda');
 
 function createAgenda(props) {
-  props              = props              || {};
-  props.locale       = props.locale       || 'en';
-  props.startDate    = props.startDate    || new Date(2015, 1, 1);
-  props.startAtTime  = props.startAtTime  || 8;
-  props.rowsPerHour  = props.rowsPerHour  || 4;
-  props.numberOfDays = props.numberOfDays || 5;
-  props.items        = props.items        || null;
-  props.onItemSelect = props.onItemSelect || null;
+  props                   = props                   || {};
+  props.locale            = props.locale            || 'en';
+  props.startDate         = props.startDate         || new Date(2015, 1, 1);
+  props.startAtTime       = props.startAtTime       || 8;
+  props.rowsPerHour       = props.rowsPerHour       || 4;
+  props.numberOfDays      = props.numberOfDays      || 5;
+  props.items             = props.items             || null;
+  props.onItemSelect      = props.onItemSelect      || null;
+  props.onDateRangeChange = props.onDateRangeChange || null;
 
   return (
     <HvReactAgenda
@@ -22,6 +23,7 @@ function createAgenda(props) {
       numberOfDays={props.numberOfDays}
       items={props.items}
       onItemSelect={props.onItemSelect}
+      onDateRangeChange={props.onDateRangeChange}
     />
   );
 }
@@ -43,6 +45,25 @@ describe('HvReactAgenda', function() {
       TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
       var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
       assert.equal(colLabel, "Tue 1/27");
+      done();
+    });
+
+    it('should handle change of date range', function(done) {
+      var startDate, endDate;
+      var props = {
+        startDate: new Date(2014, 1, 1),
+        onDateRangeChange: function(newStartDate, newEndDate) {
+          startDate = newStartDate;
+          endDate   = newEndDate;
+        }
+      };
+      var agenda = TestUtils.renderIntoDocument(createAgenda(props));
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__next')[0]);
+      assert.equal(startDate.getTime(), (new Date(2014, 1, 6)).getTime());
+      assert.equal(endDate.getTime(), (new Date(2014, 1, 10)).getTime());
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      assert.equal(startDate.getTime(), (new Date(2014, 1, 1)).getTime());
+      assert.equal(endDate.getTime(), (new Date(2014, 1, 5)).getTime());
       done();
     });
 
