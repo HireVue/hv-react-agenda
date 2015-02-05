@@ -68,7 +68,7 @@ var HvReactAgenda = React.createClass({
     }
 
     if (this.props.startDate) {
-      this.setState({date: this.props.startDate});
+      this.setState({date: moment(this.props.startDate)});
     }
   },
 
