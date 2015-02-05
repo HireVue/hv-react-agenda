@@ -62,13 +62,13 @@ var HvReactAgenda = React.createClass({
     scrollContainer.scrollTop = rowToScrollTo.offsetTop;
   },
 
-  componentWillReceiveProps: function() {
-    if (this.props.items) {
-      this.setState({items: this.mapItems(this.props.items)});
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.items) {
+      this.setState({items: this.mapItems(nextProps.items)});
     }
 
-    if (this.props.startDate) {
-      this.setState({date: moment(this.props.startDate)});
+    if (nextProps.startDate) {
+      this.setState({date: moment(nextProps.startDate)});
     }
   },
 
