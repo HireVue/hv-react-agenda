@@ -113,6 +113,10 @@ var HvReactAgenda =
 	    if (this.props.items) {
 	      this.setState({items: this.mapItems(this.props.items)});
 	    }
+
+	    if (this.props.startDate) {
+	      this.setState({date: this.props.startDate});
+	    }
 	  },
 
 	  nextRange: function() {
