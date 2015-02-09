@@ -10,6 +10,7 @@ function createAgenda(props) {
   props.startAtTime       = props.startAtTime       || 8;
   props.rowsPerHour       = props.rowsPerHour       || 4;
   props.numberOfDays      = props.numberOfDays      || 5;
+  props.disablePast       = props.disablePast       || false;
   props.items             = props.items             || null;
   props.onItemSelect      = props.onItemSelect      || null;
   props.onDateRangeChange = props.onDateRangeChange || null;
@@ -21,6 +22,7 @@ function createAgenda(props) {
       startAtTime={props.startAtTime}
       rowsPerHour={props.rowsPerHour}
       numberOfDays={props.numberOfDays}
+      disablePast={props.disablePast}
       items={props.items}
       onItemSelect={props.onItemSelect}
       onDateRangeChange={props.onDateRangeChange}
@@ -249,6 +251,38 @@ describe('HvReactAgenda', function() {
       assert.equal(result.extra, item.extra);
       assert.equal(result.startDateTime, item.startDateTime);
       assert.equal(result.endDateTime, item.endDateTime);
+      done();
+    });
+
+    it('should show today if set to past date while past is disabled', function(done) {
+      var agenda = TestUtils.renderIntoDocument(createAgenda({startDate: new Date()}));
+      var todayLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+
+      var props = {
+        startDate   : new Date(2014, 0, 1),
+        disablePast : true
+      };
+      var newAgenda  = TestUtils.renderIntoDocument(createAgenda(props));
+      var afterLabel = newAgenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+      assert.equal(todayLabel, afterLabel);
+      done();
+    });
+
+    it('should prevent from going to the past if the past is disabled', function(done) {
+      var agenda = TestUtils.renderIntoDocument(createAgenda({startDate: new Date()}));
+      var todayLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+
+      var props = {
+        startDate   : new Date(),
+        disablePast : true
+      };
+      var newAgenda  = TestUtils.renderIntoDocument(createAgenda(props));
+      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      var afterLabel = newAgenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+      assert.equal(todayLabel, afterLabel);
       done();
     });
 

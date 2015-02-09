@@ -17,6 +17,7 @@ var HvReactAgenda = React.createClass({
     startAtTime       : PropTypes.number.isRequired,
     rowsPerHour       : PropTypes.oneOf([1,2,3,4]).isRequired,
     numberOfDays      : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
+    disablePast       : PropTypes.bool,
     items             : PropTypes.arrayOf(PropTypes.shape({
       name            : PropTypes.string,
       startDateTime   : PropTypes.instanceOf(Date).isRequired,
@@ -32,7 +33,8 @@ var HvReactAgenda = React.createClass({
       locale       : 'en',
       startAtTime  : 8,
       rowsPerHour  : 4,
-      numberOfDays : 5
+      numberOfDays : 5,
+      disablePast  : false
     }
   },
 
@@ -48,7 +50,11 @@ var HvReactAgenda = React.createClass({
 
   componentWillMount: function() {
     if (this.props.startDate) {
-      this.setState({date: moment(this.props.startDate)});
+      if (this.props.disablePast && this.props.startDate < new Date()) {
+        this.setState({date: moment()});
+      } else {
+        this.setState({date: moment(this.props.startDate)});
+      }
     }
 
     if (this.props.items) {
@@ -69,7 +75,11 @@ var HvReactAgenda = React.createClass({
     }
 
     if (nextProps.startDate) {
-      this.setState({date: moment(nextProps.startDate)});
+      if (this.props.disablePast && nextProps.startDate < new Date()) {
+        this.setState({date: moment()});
+      } else {
+        this.setState({date: moment(nextProps.startDate)});
+      }
     }
   },
 
@@ -88,17 +98,44 @@ var HvReactAgenda = React.createClass({
   },
 
   prevRange: function() {
-    this.setState({date: this.state.date.subtract(this.props.numberOfDays, 'days')});
+    if (!this.isYesterdayDisabled()) {
+      if (this.props.disablePast) {
+        var currentDate  = this.state.date.toDate();
+        var now          = new Date();
+        var prevTimeSpan = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-this.props.numberOfDays);
+        if (prevTimeSpan < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+          this.setState({date: moment()});
+        } else {
+          this.setState({date: this.state.date.subtract(this.props.numberOfDays, 'days')});
+        }
+      } else {
+          this.setState({date: this.state.date.subtract(this.props.numberOfDays, 'days')});
+      }
 
-    var newStart = moment(this.state.date);
-    var newEnd   = moment(newStart).add(this.props.numberOfDays-1, 'days');
+      var newStart = moment(this.state.date);
+      var newEnd   = moment(newStart).add(this.props.numberOfDays-1, 'days');
 
-    if (this.props.onDateRangeChange) {
-      this.props.onDateRangeChange(
-        newStart.toDate(),
-        newEnd.toDate()
-      );
+      if (this.props.onDateRangeChange) {
+        this.props.onDateRangeChange(
+          newStart.toDate(),
+          newEnd.toDate()
+        );
+      }
     }
+  },
+
+  isYesterdayDisabled: function() {
+    if (!this.props.disablePast) {
+      return false;
+    } else {
+      var currentDate  = this.state.date.toDate();
+      var now          = new Date();
+      var prevTimeSpan = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-1);
+      if (prevTimeSpan < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+        return true;
+      }
+    }
+    return false;
   },
 
   mapItems: function(itemsArray) {
@@ -271,7 +308,7 @@ var HvReactAgenda = React.createClass({
             <thead>
               <tr>
                 <th ref="column-0" className="agenda__cell --controls">
-                  <div className="agenda__prev" onClick={this.prevRange}><span>&laquo;</span></div>
+                  <div className={"agenda__prev" + (this.isYesterdayDisabled() ? " --disabled" : "")} onClick={this.prevRange}><span>&laquo;</span></div>
                   <div className="agenda__next" onClick={this.nextRange}><span>&raquo;</span></div>
                 </th>
                 {this.getHeaderColumns().map(renderHeaderColumns, this)}
