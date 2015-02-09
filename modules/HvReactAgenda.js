@@ -103,6 +103,11 @@ var HvReactAgenda = React.createClass({
 
   mapItems: function(itemsArray) {
     var itemsMap = {};
+
+    itemsArray = itemsArray.sort(function(a, b) {
+      return a.startDateTime - b.startDateTime;
+    });
+
     itemsArray.forEach(function(item) {
       var interval      = (60/this.props.rowsPerHour);
       var offsetMinutes = item.startDateTime.getMinutes() % interval;
