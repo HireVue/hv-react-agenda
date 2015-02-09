@@ -1,7 +1,7 @@
 var React         = require('react');
 var HvReactAgenda = require('hv-react-agenda');
 
-var now = new Date(2015, 5, 24);
+var now = new Date((new Date()).getFullYear(), 5, 21);
 var items = [
   {
     name          : 'Snorlax, I choose you!',
@@ -57,7 +57,7 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <HvReactAgenda startDate={now} startAtTime={7} items={items} fixedHeader={true} onItemSelect={this.handleItemSelection} onDateRangeChange={this.handleDateRangeChange} />
+        <HvReactAgenda disablePast={true} startDate={now} startAtTime={7} items={items} fixedHeader={true} onItemSelect={this.handleItemSelection} onDateRangeChange={this.handleDateRangeChange} />
       </div>
     )
   }
