@@ -1,6 +1,7 @@
 # hv-react-agenda
 [![Build Status](https://travis-ci.org/HireVue/hv-react-agenda.svg?branch=master)](https://travis-ci.org/HireVue/hv-react-agenda)
 [![Dependency Status](https://david-dm.org/HireVue/hv-react-agenda.svg?branch=master)](https://david-dm.org/HireVue/hv-react-agenda)
+[![Coverage Status](https://coveralls.io/repos/HireVue/hv-react-agenda/badge.svg)](https://coveralls.io/r/HireVue/hv-react-agenda)
 
 Fancy agenda component for use with ReactJS.
 
