@@ -33,7 +33,6 @@ var HvReactAgenda = React.createClass({
       locale       : 'en',
       startAtTime  : 8,
       rowsPerHour  : 4,
-      numberOfDays : 5,
       disablePast  : false
     }
   },
@@ -44,6 +43,7 @@ var HvReactAgenda = React.createClass({
       items             : {},
       itemOverlayStyles : {},
       highlightedCells  : [],
+      numberOfDays      : 5,
       focusedCell       : null
     }
   },
@@ -59,6 +59,10 @@ var HvReactAgenda = React.createClass({
 
     if (this.props.items) {
       this.setState({items: this.mapItems(this.props.items)});
+    }
+
+    if (this.props.numberOfDays) {
+      this.setState({numberOfDays: this.props.numberOfDays});
     }
   },
 
@@ -80,6 +84,10 @@ var HvReactAgenda = React.createClass({
       } else {
         this.setState({date: moment(nextProps.startDate)});
       }
+    }
+
+    if (nextProps.numberOfDays) {
+      this.setState({numberOfDays: nextProps.numberOfDays});
     }
   },
 
