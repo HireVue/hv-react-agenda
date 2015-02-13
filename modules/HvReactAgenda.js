@@ -180,7 +180,7 @@ var HvReactAgenda = React.createClass({
 
   getHeaderColumns: function() {
     var cols = [];
-    for (var i = 0; i < this.props.numberOfDays; i++) {
+    for (var i = 0; i < this.state.numberOfDays; i++) {
       cols.push(moment(this.state.date).add(i, 'days').toDate());
     }
     return cols;
@@ -197,7 +197,7 @@ var HvReactAgenda = React.createClass({
 
   getMinuteCells: function(rowMoment) {
     var cells = [];
-    for (var i = 0; i < this.props.numberOfDays; i++) {
+    for (var i = 0; i < this.state.numberOfDays; i++) {
       var cellRef = moment(rowMoment).add(i, 'days').format('YYYY-MM-DDTHH:mm:ss');
       cells.push({
         cellRef: cellRef,
