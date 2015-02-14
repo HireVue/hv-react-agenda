@@ -57,7 +57,7 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <HvReactAgenda disablePast={true} startDate={now} startAtTime={7} items={items} fixedHeader={true} onItemSelect={this.handleItemSelection} onDateRangeChange={this.handleDateRangeChange} />
+        <HvReactAgenda minDate={now} maxDate={new Date(now.getFullYear(), now.getMonth()+3)} disablePrevButton={true} startDate={now} startAtTime={7} items={items} fixedHeader={true} onItemSelect={this.handleItemSelection} onDateRangeChange={this.handleDateRangeChange} />
       </div>
     )
   }

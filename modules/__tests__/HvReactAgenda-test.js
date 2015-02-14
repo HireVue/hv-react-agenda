@@ -10,10 +10,11 @@ function createAgenda(props) {
   props.startAtTime       = props.startAtTime       || 8;
   props.rowsPerHour       = props.rowsPerHour       || 4;
   props.numberOfDays      = props.numberOfDays      || 5;
-  props.disablePast       = props.disablePast       || false;
-  props.items             = props.items             || null;
-  props.onItemSelect      = props.onItemSelect      || null;
-  props.onDateRangeChange = props.onDateRangeChange || null;
+  props.items             = props.items             || [];
+  props.onItemSelect      = props.onItemSelect      || function(){};
+  props.onDateRangeChange = props.onDateRangeChange || function(){};
+  props.minDate           = props.minDate           || new Date(2014, 1, 1);
+  props.maxDate           = props.maxDate           || new Date(2016, 1, 1);
 
   return (
     <HvReactAgenda
@@ -22,10 +23,11 @@ function createAgenda(props) {
       startAtTime={props.startAtTime}
       rowsPerHour={props.rowsPerHour}
       numberOfDays={props.numberOfDays}
-      disablePast={props.disablePast}
       items={props.items}
       onItemSelect={props.onItemSelect}
       onDateRangeChange={props.onDateRangeChange}
+      minDate={props.minDate}
+      maxDate={props.maxDate}
     />
   );
 }
@@ -254,35 +256,41 @@ describe('HvReactAgenda', function() {
       done();
     });
 
-    it('should show today if set to past date while past is disabled', function(done) {
-      var agenda = TestUtils.renderIntoDocument(createAgenda({startDate: new Date()}));
-      var todayLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
-
+    it('should not allow dates before min date', function(done) {
       var props = {
-        startDate   : new Date(2014, 0, 1),
-        disablePast : true
+        startDate: new Date(2015, 1, 23),
+        minDate: new Date(2015, 1, 1)
       };
-      var newAgenda  = TestUtils.renderIntoDocument(createAgenda(props));
-      var afterLabel = newAgenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
-      assert.equal(todayLabel, afterLabel);
+
+      var agenda = TestUtils.renderIntoDocument(createAgenda(props));
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+      assert.equal(colLabel, "Sun 2/1");
       done();
     });
 
-    it('should prevent from going to the past if the past is disabled', function(done) {
-      var agenda = TestUtils.renderIntoDocument(createAgenda({startDate: new Date()}));
-      var todayLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
-
+    it('should not allow dates after max date', function(done) {
       var props = {
-        startDate   : new Date(),
-        disablePast : true
+        startDate: new Date(2015, 11, 15),
+        minDate: new Date(2015, 11, 30)
       };
-      var newAgenda  = TestUtils.renderIntoDocument(createAgenda(props));
-      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
-      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
-      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
-      TestUtils.Simulate.click(newAgenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
-      var afterLabel = newAgenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
-      assert.equal(todayLabel, afterLabel);
+
+      var agenda = TestUtils.renderIntoDocument(createAgenda(props));
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      TestUtils.Simulate.click(agenda.getDOMNode().getElementsByClassName('agenda__prev')[0]);
+      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+      assert.equal(colLabel, "Wed 12/30");
       done();
     });
 

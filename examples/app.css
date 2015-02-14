@@ -61,6 +61,14 @@
   border-right: none;
 }
 
+.agenda__cell.\--controls .agenda__prev.\--disabled {
+  color: #CCC;
+}
+
+.agenda__cell.\--controls .agenda__next.\--disabled {
+  color: #CCC;
+}
+
 .agenda__cell.\--controls .agenda__prev span {
   display: none;
 }

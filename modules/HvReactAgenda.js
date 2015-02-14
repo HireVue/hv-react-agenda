@@ -9,6 +9,38 @@ var DEFAULT_ITEM = {
   cellRefs : []
 };
 
+function mapItems(itemsArray, rowsPerHour) {
+  var itemsMap = {};
+
+  itemsArray = itemsArray.sort(function(a, b) {
+    return a.startDateTime - b.startDateTime;
+  });
+
+  itemsArray.forEach(function(item) {
+    var interval      = (60/rowsPerHour);
+    var offsetMinutes = item.startDateTime.getMinutes() % interval;
+    var start         = moment(item.startDateTime).subtract(offsetMinutes, "minutes").toDate();
+    var end           = item.endDateTime;
+    var duration      = moment.duration(moment(end).diff(moment(start)));
+    var rows          = Math.ceil(duration.asHours()/(interval/60));
+
+    var cellRefs = [];
+    for (var i = 0; i < rows; i++) {
+      var ref = moment(start).add(i*interval, 'minutes').format('YYYY-MM-DDTHH:mm:ss');
+      cellRefs.push(ref);
+    }
+
+    cellRefs.forEach(function(ref) {
+      var newItem = _.omit(item, 'classes');
+      newItem.classes  = (itemsMap[ref]) ? (itemsMap[ref].classes + ' ' + item.classes) : (item.classes || '');
+      newItem.cellRefs = cellRefs;
+      itemsMap[ref] = newItem;
+    });
+  }, this);
+
+  return itemsMap;
+}
+
 var HvReactAgenda = React.createClass({
 
   propTypes: {
@@ -17,7 +49,6 @@ var HvReactAgenda = React.createClass({
     startAtTime       : PropTypes.number.isRequired,
     rowsPerHour       : PropTypes.oneOf([1,2,3,4]).isRequired,
     numberOfDays      : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
-    disablePast       : PropTypes.bool,
     items             : PropTypes.arrayOf(PropTypes.shape({
       name            : PropTypes.string,
       startDateTime   : PropTypes.instanceOf(Date).isRequired,
@@ -25,15 +56,20 @@ var HvReactAgenda = React.createClass({
       classes         : PropTypes.string
     })),
     onItemSelect      : PropTypes.func,
-    onDateRangeChange : PropTypes.func
+    onDateRangeChange : PropTypes.func,
+    minDate           : PropTypes.instanceOf(Date),
+    maxDate           : PropTypes.instanceOf(Date)
   },
 
   getDefaultProps: function() {
     return {
-      locale       : 'en',
-      startAtTime  : 8,
-      rowsPerHour  : 4,
-      disablePast  : false
+      locale            : 'en',
+      startAtTime       : 8,
+      rowsPerHour       : 4,
+      numberOfDays      : 5,
+      items             : [],
+      onItemSelect      : function(){},
+      onDateRangeChange : function(){}
     }
   },
 
@@ -43,27 +79,22 @@ var HvReactAgenda = React.createClass({
       items             : {},
       itemOverlayStyles : {},
       highlightedCells  : [],
-      numberOfDays      : 5,
       focusedCell       : null
     }
   },
 
+  /********************/
+  /*  Life Cycle      */
+  /********************/
   componentWillMount: function() {
-    if (this.props.startDate) {
-      if (this.props.disablePast && this.props.startDate < new Date()) {
-        this.setState({date: moment()});
-      } else {
-        this.setState({date: moment(this.props.startDate)});
-      }
-    }
+      this.handleBeforeUpdate(this.props);
+  },
 
-    if (this.props.items) {
-      this.setState({items: this.mapItems(this.props.items)});
-    }
+  componentWillUnmount: function() {
+  },
 
-    if (this.props.numberOfDays) {
-      this.setState({numberOfDays: this.props.numberOfDays});
-    }
+  componentWillReceiveProps: function(props) {
+      this.handleBeforeUpdate(props);
   },
 
   componentDidMount: function() {
@@ -71,113 +102,17 @@ var HvReactAgenda = React.createClass({
     var scrollContainer = this.refs.agendaScrollContainer.getDOMNode();
     var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
     scrollContainer.scrollTop = rowToScrollTo.offsetTop;
+
+    this.handleUpdate(this.props, this.getInitialState());
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    if (nextProps.items) {
-      this.setState({items: this.mapItems(nextProps.items)});
-    }
-
-    if (nextProps.startDate) {
-      if (this.props.disablePast && nextProps.startDate < new Date()) {
-        this.setState({date: moment()});
-      } else {
-        this.setState({date: moment(nextProps.startDate)});
-      }
-    }
-
-    if (nextProps.numberOfDays) {
-      this.setState({numberOfDays: nextProps.numberOfDays});
-    }
+  componentDidUpdate: function(prevProps, prevState) {
+      this.handleUpdate(prevProps, prevState);
   },
 
-  nextRange: function() {
-    this.setState({date: this.state.date.add(this.props.numberOfDays, 'days')});
-
-    var newStart = moment(this.state.date);
-    var newEnd   = moment(newStart).add(this.props.numberOfDays-1, 'days');
-
-    if (this.props.onDateRangeChange) {
-      this.props.onDateRangeChange(
-        newStart.toDate(),
-        newEnd.toDate()
-      );
-    }
-  },
-
-  prevRange: function() {
-    if (!this.isYesterdayDisabled()) {
-      if (this.props.disablePast) {
-        var currentDate  = this.state.date.toDate();
-        var now          = new Date();
-        var prevTimeSpan = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-this.props.numberOfDays);
-        if (prevTimeSpan < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
-          this.setState({date: moment()});
-        } else {
-          this.setState({date: this.state.date.subtract(this.props.numberOfDays, 'days')});
-        }
-      } else {
-          this.setState({date: this.state.date.subtract(this.props.numberOfDays, 'days')});
-      }
-
-      var newStart = moment(this.state.date);
-      var newEnd   = moment(newStart).add(this.props.numberOfDays-1, 'days');
-
-      if (this.props.onDateRangeChange) {
-        this.props.onDateRangeChange(
-          newStart.toDate(),
-          newEnd.toDate()
-        );
-      }
-    }
-  },
-
-  isYesterdayDisabled: function() {
-    if (!this.props.disablePast) {
-      return false;
-    } else {
-      var currentDate  = this.state.date.toDate();
-      var now          = new Date();
-      var prevTimeSpan = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()-1);
-      if (prevTimeSpan < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
-        return true;
-      }
-    }
-    return false;
-  },
-
-  mapItems: function(itemsArray) {
-    var itemsMap = {};
-
-    itemsArray = itemsArray.sort(function(a, b) {
-      return a.startDateTime - b.startDateTime;
-    });
-
-    itemsArray.forEach(function(item) {
-      var interval      = (60/this.props.rowsPerHour);
-      var offsetMinutes = item.startDateTime.getMinutes() % interval;
-      var start         = moment(item.startDateTime).subtract(offsetMinutes, "minutes").toDate();
-      var end           = item.endDateTime;
-      var duration      = moment.duration(moment(end).diff(moment(start)));
-      var rows          = Math.ceil(duration.asHours()/(interval/60));
-
-      var cellRefs = [];
-      for (var i = 0; i < rows; i++) {
-        var ref = moment(start).add(i*interval, 'minutes').format('YYYY-MM-DDTHH:mm:ss');
-        cellRefs.push(ref);
-      }
-
-      cellRefs.forEach(function(ref) {
-        var newItem = _.omit(item, 'classes');
-        newItem.classes  = (itemsMap[ref]) ? (itemsMap[ref].classes + ' ' + item.classes) : (item.classes || '');
-        newItem.cellRefs = cellRefs;
-        itemsMap[ref] = newItem;
-      });
-    }, this);
-
-    return itemsMap;
-  },
-
+  /********************/
+  /*  Item Renderers  */
+  /********************/
   getHeaderColumns: function() {
     var cols = [];
     for (var i = 0; i < this.state.numberOfDays; i++) {
@@ -227,6 +162,86 @@ var HvReactAgenda = React.createClass({
       return {
         display: 'none'
       };
+    }
+  },
+
+  /********************/
+  /*  Event Handlers  */
+  /********************/
+  handleBeforeUpdate: function(props) {
+    if (props.hasOwnProperty('startDate') && props.startDate !== this.state.date.toDate()) {
+      this.setState({
+        date: moment(this.props.startDate)
+      });
+    }
+
+    if (props.hasOwnProperty('items')) {
+      this.setState({
+        items: mapItems(this.props.items, this.props.rowsPerHour)
+      });
+    }
+
+    if (props.hasOwnProperty('numberOfDays') && props.numberOfDays !== this.state.numberOfDays) {
+      this.setState({
+        numberOfDays: this.props.numberOfDays
+      });
+    }
+
+    if (props.hasOwnProperty('minDate') && (!this.state.hasOwnProperty('minDate') || props.minDate !== this.state.minDate.toDate())) {
+      this.setState({
+        minDate: moment(this.props.minDate)
+      });
+    }
+
+    if (props.hasOwnProperty('maxDate') && (!this.state.hasOwnProperty('maxDate') || props.maxDate !== this.state.maxDate.toDate())) {
+      this.setState({
+        maxDate: moment(this.props.maxDate)
+      });
+    }
+  },
+
+  handleUpdate: function(prevProps, prevState) {
+  },
+
+  handleOnNextButtonClick: function() {
+    var nextStartDate = moment(this.state.date).add(this.state.numberOfDays, 'days');
+    if (this.state.hasOwnProperty('maxDate')) {
+      nextStartDate = moment.min(nextStartDate, this.state.maxDate);
+    }
+
+    var newStart = nextStartDate;
+    var newEnd   = moment(newStart).add(this.state.numberOfDays-1, 'days');
+
+    if (nextStartDate !== this.state.date) {
+      this.setState({date: nextStartDate});
+    }
+
+    if (this.props.onDateRangeChange) {
+      this.props.onDateRangeChange(
+        newStart.toDate(),
+        newEnd.toDate()
+      );
+    }
+  },
+
+  handleOnPrevButtonClick: function() {
+    var prevStartDate = moment(this.state.date).subtract(this.state.numberOfDays, 'days');
+    if (this.state.hasOwnProperty('minDate')) {
+      prevStartDate = moment.max(prevStartDate, this.state.minDate);
+    }
+
+    var newStart = prevStartDate;
+    var newEnd   = moment(newStart).add(this.state.numberOfDays-1, 'days');
+
+    if (prevStartDate !== this.state.date) {
+      this.setState({date: prevStartDate});
+    }
+
+    if (this.props.onDateRangeChange) {
+      this.props.onDateRangeChange(
+        newStart.toDate(),
+        newEnd.toDate()
+      );
     }
   },
 
@@ -309,6 +324,22 @@ var HvReactAgenda = React.createClass({
       );
     };
 
+    var disablePrev = function(state) {
+      if (!state.hasOwnProperty('minDate')) {
+        return false;
+      }
+
+      return state.date.toDate().getTime() === state.minDate.toDate().getTime();
+    };
+
+    var disableNext = function(state) {
+      if (!state.hasOwnProperty('maxDate')) {
+        return false;
+      }
+
+      return state.date.toDate().getTime() === state.maxDate.toDate().getTime();
+    };
+
     return (
       <div className="agenda">
         <div className="agenda__table --header">
@@ -316,8 +347,8 @@ var HvReactAgenda = React.createClass({
             <thead>
               <tr>
                 <th ref="column-0" className="agenda__cell --controls">
-                  <div className={"agenda__prev" + (this.isYesterdayDisabled() ? " --disabled" : "")} onClick={this.prevRange}><span>&laquo;</span></div>
-                  <div className="agenda__next" onClick={this.nextRange}><span>&raquo;</span></div>
+                  <div className={"agenda__prev" + (disablePrev(this.state) ? " --disabled" : "")} onClick={this.handleOnPrevButtonClick}><span>&laquo;</span></div>
+                  <div className={"agenda__next" + (disableNext(this.state) ? " --disabled" : "")} onClick={this.handleOnNextButtonClick}><span>&raquo;</span></div>
                 </th>
                 {this.getHeaderColumns().map(renderHeaderColumns, this)}
               </tr>
