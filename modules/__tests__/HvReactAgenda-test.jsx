@@ -1,7 +1,7 @@
 var assert        = require('assert');
 var React         = require('react/addons');
 var TestUtils     = React.addons.TestUtils;
-var HvReactAgenda = require('../HvReactAgenda');
+var HvReactAgenda = require('../HvReactAgenda.jsx');
 
 function createAgenda(props) {
   props                   = props                   || {};
