@@ -171,7 +171,7 @@ var HvReactAgenda = React.createClass({
   handleBeforeUpdate: function(props) {
     if (props.hasOwnProperty('startDate') && props.startDate !== this.state.date.toDate()) {
       this.setState({
-        date: moment(startDate)
+        date: moment(props.startDate)
       });
     }
 
