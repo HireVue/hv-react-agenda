@@ -2,7 +2,7 @@
   "name": "hv-react-agenda",
   "version": "0.1.0",
   "description": "Fancy agenda component for use with ReactJS.",
-  "main": "modules/HvReactAgenda.js",
+  "main": "modules/HvReactAgenda.jsx",
   "repository": {
     "type": "git",
     "url": "https://github.com/ebrentnelson/hv-react-agenda.git"
