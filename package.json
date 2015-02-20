@@ -30,7 +30,7 @@
     "karma-cli": "0.0.4",
     "webpack": "~1.5.3",
     "bundle-loader": "~0.5.3",
-    "jsxhint": "~0.9.0",
+    "jsxhint": "~0.12.0",
     "karma-webpack": "~1.5.0",
     "jsx-loader": "~0.12.2",
     "webpack-dev-server": "~1.7.0",
