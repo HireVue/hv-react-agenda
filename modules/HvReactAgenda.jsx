@@ -44,21 +44,22 @@ function mapItems(itemsArray, rowsPerHour) {
 var HvReactAgenda = React.createClass({
 
   propTypes: {
-    locale            : PropTypes.string.isRequired,
-    startDate         : PropTypes.instanceOf(Date),
-    startAtTime       : PropTypes.number.isRequired,
-    rowsPerHour       : PropTypes.oneOf([1,2,3,4]).isRequired,
-    numberOfDays      : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
-    items             : PropTypes.arrayOf(PropTypes.shape({
-      name            : PropTypes.string,
-      startDateTime   : PropTypes.instanceOf(Date).isRequired,
-      endDateTime     : PropTypes.instanceOf(Date).isRequired,
-      classes         : PropTypes.string
+    locale             : PropTypes.string.isRequired,
+    startDate          : PropTypes.instanceOf(Date),
+    startAtTime        : PropTypes.number.isRequired,
+    rowsPerHour        : PropTypes.oneOf([1,2,3,4]).isRequired,
+    numberOfDays       : PropTypes.oneOf([1,2,3,4,5,6,7]).isRequired,
+    items              : PropTypes.arrayOf(PropTypes.shape({
+      name             : PropTypes.string,
+      startDateTime    : PropTypes.instanceOf(Date).isRequired,
+      endDateTime      : PropTypes.instanceOf(Date).isRequired,
+      classes          : PropTypes.string
     })),
-    onItemSelect      : PropTypes.func,
-    onDateRangeChange : PropTypes.func,
-    minDate           : PropTypes.instanceOf(Date),
-    maxDate           : PropTypes.instanceOf(Date)
+    onItemSelect       : PropTypes.func,
+    onDateRangeChange  : PropTypes.func,
+    minDate            : PropTypes.instanceOf(Date),
+    maxDate            : PropTypes.instanceOf(Date),
+    disableMouseEvents : PropTypes.bool
   },
 
   getDefaultProps: function() {
@@ -246,7 +247,7 @@ var HvReactAgenda = React.createClass({
   },
 
   handleMouseEnter: function(cell) {
-    if (cell.item) {
+    if (cell.item && !this.props.disableMouseEvents) {
       this.setState({focusedCell: cell.cellRef});
       this.setState({highlightedCells: cell.item.cellRefs});
     }
@@ -258,7 +259,7 @@ var HvReactAgenda = React.createClass({
   },
 
   handleMouseClick: function(cell) {
-    if (this.props.onItemSelect && cell.item.startDateTime) {
+    if (this.props.onItemSelect && cell.item.startDateTime && !this.props.disableMouseEvents) {
       this.props.onItemSelect(_.omit(cell.item, 'cellRefs'));
     }
   },
