@@ -218,31 +218,31 @@ var HvReactAgenda =
 	  handleBeforeUpdate: function(props) {
 	    if (props.hasOwnProperty('startDate') && props.startDate !== this.state.date.toDate()) {
 	      this.setState({
-	        date: moment(this.props.startDate)
+	        date: moment(props.startDate)
 	      });
 	    }
 
 	    if (props.hasOwnProperty('items')) {
 	      this.setState({
-	        items: mapItems(this.props.items, this.props.rowsPerHour)
+	        items: mapItems(props.items, props.rowsPerHour)
 	      });
 	    }
 
 	    if (props.hasOwnProperty('numberOfDays') && props.numberOfDays !== this.state.numberOfDays) {
 	      this.setState({
-	        numberOfDays: this.props.numberOfDays
+	        numberOfDays: props.numberOfDays
 	      });
 	    }
 
 	    if (props.hasOwnProperty('minDate') && (!this.state.hasOwnProperty('minDate') || props.minDate !== this.state.minDate.toDate())) {
 	      this.setState({
-	        minDate: moment(this.props.minDate)
+	        minDate: moment(props.minDate)
 	      });
 	    }
 
 	    if (props.hasOwnProperty('maxDate') && (!this.state.hasOwnProperty('maxDate') || props.maxDate !== this.state.maxDate.toDate())) {
 	      this.setState({
-	        maxDate: moment(this.props.maxDate)
+	        maxDate: moment(props.maxDate)
 	      });
 	    }
 	  },
