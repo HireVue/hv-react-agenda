@@ -9,6 +9,8 @@ var DEFAULT_ITEM = {
   cellRefs : []
 };
 
+React.initializeTouchEvents(true);
+
 function mapItems(itemsArray, rowsPerHour) {
   var itemsMap = {};
 
@@ -312,8 +314,10 @@ var HvReactAgenda = React.createClass({
           ref={cell.cellRef}
           key={"cell-" + i}
           onMouseEnter={this.handleMouseEnter.bind(this, cell)}
+          onTouchStart={this.handleMouseEnter.bind(this, cell)}
           onMouseLeave={this.handleMouseLeave.bind(this, cell)}
           onClick={this.handleMouseClick.bind(this, cell)}
+          onTouchEnd={this.handleMouseClick.bind(this, cell)}
           className={classSet}
         >
           <div
