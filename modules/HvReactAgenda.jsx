@@ -93,9 +93,6 @@ var HvReactAgenda = React.createClass({
       this.handleBeforeUpdate(this.props);
   },
 
-  componentWillUnmount: function() {
-  },
-
   componentWillReceiveProps: function(props) {
       this.handleBeforeUpdate(props);
   },
@@ -104,13 +101,10 @@ var HvReactAgenda = React.createClass({
     // move to start time (this only happens once)
     var scrollContainer = this.refs.agendaScrollContainer.getDOMNode();
     var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
-    scrollContainer.scrollTop = rowToScrollTo.offsetTop;
 
-    this.handleUpdate(this.props, this.getInitialState());
-  },
-
-  componentDidUpdate: function(prevProps, prevState) {
-      this.handleUpdate(prevProps, prevState);
+    setTimeout(function() {
+        scrollContainer.scrollTop = rowToScrollTo.offsetTop;
+    }, 2000);
   },
 
   /********************/
@@ -201,9 +195,6 @@ var HvReactAgenda = React.createClass({
         maxDate: moment(props.maxDate)
       });
     }
-  },
-
-  handleUpdate: function(prevProps, prevState) {
   },
 
   handleOnNextButtonClick: function() {

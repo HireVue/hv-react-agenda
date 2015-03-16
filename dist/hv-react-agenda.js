@@ -56,6 +56,8 @@ var HvReactAgenda =
 	  cellRefs : []
 	};
 
+	React.initializeTouchEvents(true);
+
 	function mapItems(itemsArray, rowsPerHour) {
 	  var itemsMap = {};
 
@@ -138,9 +140,6 @@ var HvReactAgenda =
 	      this.handleBeforeUpdate(this.props);
 	  },
 
-	  componentWillUnmount: function() {
-	  },
-
 	  componentWillReceiveProps: function(props) {
 	      this.handleBeforeUpdate(props);
 	  },
@@ -149,13 +148,10 @@ var HvReactAgenda =
 	    // move to start time (this only happens once)
 	    var scrollContainer = this.refs.agendaScrollContainer.getDOMNode();
 	    var rowToScrollTo   = this.refs["hour-" + this.props.startAtTime].getDOMNode();
-	    scrollContainer.scrollTop = rowToScrollTo.offsetTop;
 
-	    this.handleUpdate(this.props, this.getInitialState());
-	  },
-
-	  componentDidUpdate: function(prevProps, prevState) {
-	      this.handleUpdate(prevProps, prevState);
+	    setTimeout(function() {
+	        scrollContainer.scrollTop = rowToScrollTo.offsetTop;
+	    }, 2000);
 	  },
 
 	  /********************/
@@ -246,9 +242,6 @@ var HvReactAgenda =
 	        maxDate: moment(props.maxDate)
 	      });
 	    }
-	  },
-
-	  handleUpdate: function(prevProps, prevState) {
 	  },
 
 	  handleOnNextButtonClick: function() {
@@ -359,8 +352,10 @@ var HvReactAgenda =
 	          ref: cell.cellRef, 
 	          key: "cell-" + i, 
 	          onMouseEnter: this.handleMouseEnter.bind(this, cell), 
+	          onTouchStart: this.handleMouseEnter.bind(this, cell), 
 	          onMouseLeave: this.handleMouseLeave.bind(this, cell), 
 	          onClick: this.handleMouseClick.bind(this, cell), 
+	          onTouchEnd: this.handleMouseClick.bind(this, cell), 
 	          className: classSet
 	        }, 
 	          React.createElement("div", {
