@@ -1,4 +1,4 @@
-var moment    = require('moment');
+var moment    = require('moment-timezone');
 var React     = require('react/addons');
 var PropTypes = React.PropTypes;
 var _         = require('underscore');
@@ -11,7 +11,7 @@ var DEFAULT_ITEM = {
 
 React.initializeTouchEvents(true);
 
-function mapItems(itemsArray, rowsPerHour) {
+function mapItems(itemsArray, rowsPerHour, timezone) {
   var itemsMap = {};
 
   itemsArray = itemsArray.sort(function(a, b) {
@@ -22,13 +22,18 @@ function mapItems(itemsArray, rowsPerHour) {
     var interval      = (60/rowsPerHour);
     var offsetMinutes = item.startDateTime.getMinutes() % interval;
     var start         = moment(item.startDateTime).subtract(offsetMinutes, "minutes").toDate();
-    var end           = item.endDateTime;
-    var duration      = moment.duration(moment(end).diff(moment(start)));
+    var end           = moment(item.endDateTime);
+    var duration      = moment.duration(end.diff(start));
     var rows          = Math.ceil(duration.asHours()/(interval/60));
 
     var cellRefs = [];
     for (var i = 0; i < rows; i++) {
-      var ref = moment(start).add(i*interval, 'minutes').format('YYYY-MM-DDTHH:mm:ss');
+      var ref = moment(start).add(i*interval, 'minutes');
+      if(timezone) {
+          ref.tz(timezone);
+      }
+      ref = ref.format('YYYY-MM-DDTHH:mm:ss');
+
       cellRefs.push(ref);
     }
 
@@ -174,7 +179,7 @@ var HvReactAgenda = React.createClass({
 
     if (props.hasOwnProperty('items')) {
       this.setState({
-        items: mapItems(props.items, props.rowsPerHour)
+        items: mapItems(props.items, props.rowsPerHour, props.timezone)
       });
     }
 

@@ -44,8 +44,10 @@
     "widget"
   ],
   "dependencies": {
-    "react": "0.12.2",
+    "json-loader": "0.5.1",
     "moment": "2.9.0",
+    "moment-timezone": "0.3.1",
+    "react": "0.12.2",
     "underscore": "1.8.1"
   }
 }
