@@ -25,7 +25,8 @@ module.exports = function (config) {
       devtool: 'inline-source-map',
       module: {
         loaders: [
-          { test: /\.jsx$/, loader: 'jsx-loader?harmony' }
+          { test: /\.jsx$/, loader: 'jsx-loader?harmony' },
+          { test: /\.json$/, loader: 'json-loader' }
         ]
       },
       plugins: [
