@@ -45,10 +45,10 @@
     "widget"
   ],
   "dependencies": {
-    "json-loader": "0.5.1",
-    "moment": "2.9.0",
-    "moment-timezone": "0.3.1",
+    "json-loader": "^0.5.4",
+    "moment": "^2.14.1",
+    "moment-timezone": "^0.5.5",
     "react": "0.12.2",
-    "underscore": "1.8.1"
+    "underscore": "^1.8.3"
   }
 }
