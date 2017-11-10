@@ -309,6 +309,66 @@ var HvReactAgenda =
 	    }
 	  },
 
+	  getDateFormat: function() {
+	    const locale = this.props.locale;
+
+	    if (!_.isUndefined(locale)) {
+	      // adapted from shortDate in angular's localization defaults found at
+	      // https://github.com/angular/angular.js/tree/master/src/ngLocale
+	      // datepicker format:
+	      //   http://api.jqueryui.com/datepicker/#utility-formatDate
+	      // angular format:
+	      //   https://docs.angularjs.org/api/ng/filter/date
+	      switch (locale) {
+	        case 'cs':
+	        case 'hr':
+	          return 'ddd D. M';
+	        case 'hu':
+	          return 'ddd MM. D';
+	        case 'sl':
+	          return 'ddd D. MM'
+	        case 'de':
+	        case 'no':
+	        case 'pl':
+	        case 'ro':
+	        case 'ru':
+	        case 'sk':
+	          return 'ddd DD.MM';
+	        case 'fi':
+	        case 'sr':
+	          return 'ddd D.M';
+	        case 'es':
+	        case 'es-mx':
+	        case 'fr':
+	        case 'id':
+	        case 'it':
+	        case 'pt':
+	        case 'pt-br':
+	        case 'vi':
+	          return 'ddd DD/MM';
+	        case 'ja':
+	        case 'ko':
+	          return 'ddd MM/DD';
+	        case 'da':
+	        case 'nl':
+	          return 'ddd DD-MM';
+	        case 'sv':
+	        case 'fr-ca':
+	          return 'ddd MM-DD';
+	        case 'th':
+	          return 'ddd D/M';
+	        case 'tr':
+	          return 'ddd D MM';
+	        case 'zh-cn':
+	        case 'zh-tw':
+	        case 'en':
+	        case 'zu':  // jshint ignore:line
+	        default:
+	          return 'ddd M/D';
+	      }
+	    }
+	  },
+
 	  render: function() {
 
 	    var renderHeaderColumns = function(col, i) {
@@ -316,7 +376,7 @@ var HvReactAgenda =
 	      headerLabel.locale(this.props.locale);
 	      return (
 	        React.createElement("th", {ref: "column-" + (i+1), key: "col-" + i, className: "agenda__cell --head"}, 
-	          headerLabel.format('ddd M\/D')
+	          headerLabel.format(this.getDateFormat())
 	        )
 	      );
 	    };
