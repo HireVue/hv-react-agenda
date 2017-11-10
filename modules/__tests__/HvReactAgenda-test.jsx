@@ -89,12 +89,19 @@ describe('HvReactAgenda', function() {
       done();
     });
 
-    it('should localize header when given a locale', function(done) {
-      var agenda = TestUtils.renderIntoDocument(createAgenda({locale: 'de'}));
-      var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
-      assert.equal(colLabel, "So. 2/1");
-      done();
-    });
+     it('should localize header when given a locale', function(done) {
+       var agenda = TestUtils.renderIntoDocument(createAgenda({locale: 'en'}));
+       var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+       assert.equal(colLabel, "Sun 2/1");
+       done();
+     });
+
+     it('should localize header differently when given a different locale', function(done) {
+       var agenda = TestUtils.renderIntoDocument(createAgenda({locale: 'fr'}));
+       var colLabel = agenda.getDOMNode().getElementsByClassName('agenda__cell --head')[0].innerHTML;
+       assert.equal(colLabel, "dim. 01/02");
+       done();
+     });
 
     it('should localize times when given a locale', function(done) {
       var agenda = TestUtils.renderIntoDocument(createAgenda({locale: 'fr'}));
