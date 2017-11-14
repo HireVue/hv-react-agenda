@@ -1,5 +1,5 @@
 {
-  "name": "hv-react-agenda",
+  "name": "@hirevue/hv-react-agenda",
   "version": "0.1.1",
   "description": "Fancy agenda component for use with ReactJS.",
   "main": "modules/HvReactAgenda.jsx",
@@ -18,9 +18,10 @@
     "build": "NODE_ENV=production webpack --progress --colors modules/HvReactAgenda.jsx dist/hv-react-agenda.js",
     "build-min": "NODE_ENV=production COMPRESS=1 webpack --progress --colors modules/HvReactAgenda.jsx dist/hv-react-agenda.min.js",
     "examples": "webpack-dev-server --config examples/webpack.config.js --no-info --content-base examples",
-    "test": "jsxhint . && karma start"
+    "test": "jsxhint . && karma start --single-run",
+    "prepublishOnly": "yarn test && yarn build && yarn build-min"
   },
-  "author": "E Brent Nelson",
+  "author": "engineering@hirevue.com",
   "license": "MIT",
   "devDependencies": {
     "bundle-loader": "0.5.3",
