@@ -33,12 +33,12 @@
     "karma-cli": "1.0.1",
     "karma-firefox-launcher": "0.1.4",
     "karma-mocha": "0.1.10",
-    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.4",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "1.8.0",
     "mocha": "2.1.0",
     "webpack": "1.13.2",
-    "webpack-dev-server": "1.7.0"
+    "webpack-dev-server": "1.8.0"
   },
   "keywords": [
     "react",
@@ -46,9 +46,9 @@
     "widget"
   ],
   "dependencies": {
-    "json-loader": "^0.5.4",
-    "moment": "^2.14.1",
-    "moment-timezone": "^0.5.5",
+    "json-loader": "^0.5.7",
+    "moment": "^2.20.1",
+    "moment-timezone": "^0.5.14",
     "react": "0.12.2",
     "underscore": "^1.8.3"
   }
